@@ -51,6 +51,9 @@
                                 <li>
                                     <a style="text-align: left;" onClick="gererPanneau('ficheTypeBois')" class="nav-link px-0 btn text-light"> <span class="d-none d-sm-inline">Details d'un type de bois</span> <span class="badge bg-primary">GET</span></a>
                                 </li>
+                                <li>
+                                    <a style="text-align: left;" onClick="gererPanneau('ficheTypeBoisNom')" class="nav-link px-0 btn text-light"> <span class="d-none d-sm-inline">Details type de bois par nom</span> <span class="badge bg-primary">GET</span></a>
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -73,6 +76,11 @@
                         <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Added 6 Colors scheme</li>
                         <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Fixed some responsive issues</li>
                     </ul>-->
+                    <h5 class="mt-4"> <span class="p-2 bg-light shadow rounded text-success"> Version 0.2.0</span> - 26 Octobre 2021</h5>
+                    <ul class="list-unstyled mt-3">
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Mise à jour des retour d'api</li>
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Ajout de la requete recupération de bois par nom</li>
+                    </ul>
                     <h5 class="mt-4"> <span class="p-2 bg-light shadow rounded text-success"> Version 0.1.0</span> - 30 Aout 2021</h5>
                     <ul class="list-unstyled mt-3">
                         <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Publication initiale</li>
@@ -124,7 +132,7 @@
                                     </ul></p>
                                     <p><span class="fw-bold">Exemple:</span></p>
                                     <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                        <p>{<br>nomCompte : 'John Cena',<br> motDePasse : 'SaintPampamSurMer'<br>}</p>
+                                        <p>{<br>&nbsp;&nbsp;nomCompte : 'John Cena',<br> &nbsp;&nbsp;motDePasse : 'SaintPampamSurMer'<br>}</p>
                                     </blockquote>
                                 </div>
                             </div>
@@ -143,7 +151,7 @@
                                         </ul></p>
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                            <p>{<br>code : 200,<br> status : "Compte(s) ajouté(s): 1" <br>}</p>
+                                            <p>{<br>&nbsp;&nbsp;code : 200,<br> &nbsp;&nbsp;status : "Compte(s) ajouté(s): 1" <br>}</p>
                                         </blockquote>
                                     </div>
                                 </div>
@@ -161,7 +169,7 @@
                                         </ul></p>
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                            <p>{<br>code : 400,<br> status : "Erreur, impossible d'ajouter le compte!" <br>}</p>
+                                            <p>{<br>&nbsp;&nbsp;code : 400,<br> &nbsp;&nbsp;status : "Erreur, impossible d'ajouter le compte!" <br>}</p>
                                         </blockquote>
                                     </div>
                                 </div>
@@ -214,7 +222,7 @@
                                     </ul></p>
                                     <p><span class="fw-bold">Exemple:</span></p>
                                     <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                        <p>{<br>nomCompte : 'John Cena',<br> motDePasse : 'SaintPampamSurMer'<br>}</p>
+                                        <p>{<br>&nbsp;&nbsp;nomCompte : 'John Cena',<br> &nbsp;&nbsp;motDePasse : 'SaintPampamSurMer'<br>}</p>
                                     </blockquote>
                                 </div>
                             </div>
@@ -233,7 +241,7 @@
                                         </ul></p>
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                            <p>{<br>code : 200,<br> token : "&sDbemdY#EJgQJbSy@7%E5SH8" <br>}</p>
+                                            <p>{<br>&nbsp;&nbsp;code : 200,<br> &nbsp;&nbsp;token : "&sDbemdY#EJgQJbSy@7%E5SH8" <br>}</p>
                                         </blockquote>
                                     </div>
                                 </div>
@@ -251,7 +259,7 @@
                                         </ul></p>
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                            <p>{<br>code : 400,<br> status : "Erreur d'identifiants." <br>}</p>
+                                            <p>{<br>&nbsp;&nbsp;code : 400,<br> &nbsp;&nbsp;status : "Erreur d'identifiants." <br>}</p>
                                         </blockquote>
                                     </div>
                                 </div>
@@ -303,7 +311,7 @@
                                     </ul></p>
                                     <p><span class="fw-bold">Exemple:</span></p>
                                     <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                        <p>{<br>token : '&sDbemdY#EJgQJbSy@7%E5SH8'<br>}</p>
+                                        <p>{<br>&nbsp;&nbsp;token : '&sDbemdY#EJgQJbSy@7%E5SH8'<br>}</p>
                                     </blockquote>
                                 </div>
                             </div>
@@ -321,7 +329,7 @@
                                         </ul></p>
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                            <p>{<br>retour : true <br>}</p>
+                                            <p>{<br>&nbsp;&nbsp;retour : true <br>}</p>
                                         </blockquote>
                                     </div>
                                 </div>
@@ -338,7 +346,7 @@
                                         </ul></p>
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                            <p>{<br>retour : false <br>}</p>
+                                            <p>{<br>&nbsp;&nbsp;retour : false <br>}</p>
                                         </blockquote>
                                     </div>
                                 </div>
@@ -403,14 +411,15 @@
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
                                             <p>[<br>
-                                                {<br>
-                                                    "id": 1,<br>
-                                                    "nom": "Erable"<br>
-                                                },<br>
-                                                {<br>
-                                                    "id": 2,<br>
-                                                    "nom": "Erable du japon"<br>
-                                                }<br>
+                                                &nbsp;&nbsp;code: 200,<br>
+                                                &nbsp;&nbsp;donnees: {<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"id": 1,<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"nom": "Erable"<br>
+                                                &nbsp;&nbsp;},<br>
+                                                &nbsp;&nbsp;{<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"id": 2,<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"nom": "Erable du japon"<br>
+                                                &nbsp;&nbsp;}<br>
                                             ]</p>
                                         </blockquote>
                                     </div>
@@ -429,8 +438,8 @@
                                         </ul></p>
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                            <p>{<br>code : 400 <br>
-                                            status: "Aucun type de bois disponible."<br>}</p>
+                                            <p>{<br>&nbsp;&nbsp;code : 400 <br>
+                                            &nbsp;&nbsp;status: "Aucun type de bois disponible."<br>}</p>
                                         </blockquote>
                                     </div>
                                 </div>
@@ -440,6 +449,96 @@
                 </div>
             </div>
             <!-- FIN ZONE LISTE TYPES DE BOIS -->
+            <!-- ZONE LISTE TYPES DE BOIS PAR NOM -->
+            <div id="ficheTypeBoisNom" class="col py-3 d-none">
+                <div class="col-8 offset-2">
+                    <div class="row">
+                        <h3>Fiche de type de bois par nom</h3>
+                    </div>
+                    <div class="row">
+                        <h4>URL d'appel</h4>
+                        <div class="d-flex justify-content-between bg-light ml-2 px-2 py-2">
+                            <div class="font-monospace col-4">/ficheTypeBois/{:nom}</div>
+                            <div class="align-middle"><span class="badge bg-primary">GET</span></div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link active" id="requeteFTB-tab" data-bs-toggle="tab" href="#requeteFTB" role="tab" aria-controls="requeteFTB" aria-selected="true">Requete</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link" id="reponseFTB-tab" data-bs-toggle="tab" href="#reponseFTB" role="tab" aria-controls="reponseFTB" aria-selected="false">Reponse</a>
+                            </li>
+                          </ul>
+                          <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="requeteFTB" role="tabpanel" aria-labelledby="requeteFTB-tab">
+                                <div class="row">
+                                    <h5>Params</h5>
+                                    <div class='row'>
+                                        <div class="col-2 align-middle"><span class="badge bg-primary">GET</span></div>
+                                        <div class="col-10">Permet de récupérer un type de bois pqr son nom.<br><span class="badge bg-warning text-dark">Méthode asynchrone</span></div>
+                                    </div>
+                                    <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                    <p><span class="fw-bold">Type:</span> Object</p>
+                                    <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                        <li class="list-group-item"><span class="fw-bold">nomBois:</span> <span class="fst-italic">required (string, Peut ne pas être complet)</span></li>
+                                    </ul></p>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="reponseFTB" role="tabpanel" aria-labelledby="reponseFTB-tab">
+                                <div class="row mt-4">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-primary">200</span></h5>
+                                    <hr>
+                                    <p>Un type de bois a été obtenu avec succès.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">result:</span> <span class="fst-italic">required (Object list)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>[<br>
+                                                &nbsp;&nbsp;code: 200,<br>
+                                                &nbsp;&nbsp;donnees: {<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"id": 1,<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"nom": "Erable",<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"type": "Dur",<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"origine": "Etats Unis",<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"sechage": 25,<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"temperature": 25.75<br>
+                                                &nbsp;&nbsp;}<br>
+                                            ]</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-danger">400</span></h5>
+                                    <hr>
+                                    <p>Une erreur est survenue pendant la récupération d'un type de bois.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">code:</span> <span class="fst-italic">required (int)</span></li>
+                                            <li class="list-group-item"><span class="fw-bold">status:</span> <span class="fst-italic">required (string)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>&nbsp;&nbsp;code : 400 <br>
+                                            &nbsp;&nbsp;status: "Type de bois inconnu."<br>}</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN ZONE LISTE TYPES DE BOIS PAR NOM -->
             <!-- ZONE FICHE TYPE DE BOIS -->
             <div id="ficheTypeBois" class="col py-3 d-none">
                 <div class="col-8 offset-2">
@@ -491,14 +590,17 @@
                                         </ul></p>
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                            <p>{<br>
-                                                    "id": 1,<br>
-                                                    "nom": "Erable",<br>
-                                                    "type": "Dur",<br>
-                                                    "origine": "Etats Unis",<br>
-                                                    "sechage": 25,<br>
-                                                    "temperature": 25.75<br>
-                                                }<br></p>
+                                            <p>[<br>
+                                                &nbsp;&nbsp;code: 200,<br>
+                                                &nbsp;&nbsp;donnees: {<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"id": 1,<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"nom": "Erable",<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"type": "Dur",<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"origine": "Etats Unis",<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"sechage": 25,<br>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;"temperature": 25.75<br>
+                                                &nbsp;&nbsp;}<br>
+                                            ]</p>
                                         </blockquote>
                                     </div>
                                 </div>
@@ -516,8 +618,8 @@
                                         </ul></p>
                                         <p><span class="fw-bold">Exemple:</span></p>
                                         <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
-                                            <p>{<br>code : 400 <br>
-                                            status: "Type de bois inconnu."<br>}</p>
+                                            <p>{<br>&nbsp;&nbsp;code : 400 <br>
+                                            &nbsp;&nbsp;status: "Type de bois inconnu."<br>}</p>
                                         </blockquote>
                                     </div>
                                 </div>

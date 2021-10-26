@@ -98,7 +98,7 @@ app.get('/api/obtenirBoisNom/:nomBois', async (req, res) => {
 app.get('/api/verifierExistance/:tokenCompte', async (req, res) => {
     const query = "SELECT id FROM compte WHERE token=?";
 
-    connexion.query(query, [req.params.tokenCompte], (error, results) => {
+    connexion.query(query, [entities.encode(req.params.tokenCompte)], (error, results) => {
         if(!results){
             res.json({retour: "false"});
         }else{
@@ -118,7 +118,7 @@ app.post("/api/nouvelUtilisateur", async (req, res) => {
         const hashedPass = await bcrypt.hash(req.body.motDePasse, saltL);
 
         const query = "INSERT INTO compte(nom, mot_de_passe, token) VALUES (?)";
-        let valeurs = [req.body.nomCompte, hashedPass, creerToken(15)];
+        let valeurs = [entities.encode(req.body.nomCompte), hashedPass, entities.encode(creerToken(15))];
 
         connexion.query(query, [valeurs], (error, results) => {
             if (error) throw res.json({status: "error"});
