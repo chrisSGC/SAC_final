@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[DEV 1.0] Documentation API</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.min.css" integrity="sha256-nwNjrH7J9zS/Ti4twtWX7OsC5QdQHCIKTv5cLMsGo68=" crossorigin="anonymous" />
+
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <!-- MENU LATERAL -->
+            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-5 d-none d-sm-inline">Menu</span>
+                    </a>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                        <li class="nav-item">
+                            <a onClick="gererPanneau('accueil')" class="nav-link align-middle px-0 btn">
+                                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Accueil</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                                <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Compte</span> </a>
+                            <ul class="collapse show nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
+                                <li class="w-100">
+                                    <a style="text-align: left;" onClick="gererPanneau('creerCompte')" class="nav-link px-0 btn text-light"> <span class="d-none d-sm-inline">Creer un compte</span> <span class="badge bg-success">POST</span></a>
+                                </li>
+                                <li class="w-100">
+                                    <a style="text-align: left;" onClick="gererPanneau('connexion')" class="nav-link px-0 ml-0 btn text-light"> <span class="d-none d-sm-inline">Connexion</span> <span class="badge bg-success">POST</span></a>
+                                </li>
+                                <li class="w-100">
+                                    <a style="text-align: left;" onClick="gererPanneau('verifierCompte')" class="nav-link px-0 btn text-light"> <span class="d-none d-sm-inline">Vérifier un compte</span> <span class="badge bg-primary">GET</span></a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
+                                <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">API</span></a>
+                            <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
+                                <li class="w-100">
+                                    <a style="text-align: left;" onClick="gererPanneau('typeBois')" class="nav-link px-0 btn text-light"> <span class="d-none d-sm-inline">Liste des types de bois</span> <span class="badge bg-primary">GET</span></a>
+                                </li>
+                                <li>
+                                    <a style="text-align: left;" onClick="gererPanneau('ficheTypeBois')" class="nav-link px-0 btn text-light"> <span class="d-none d-sm-inline">Details d'un type de bois</span> <span class="badge bg-primary">GET</span></a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- FIN MENU LATERAL -->
+            <!-- ZONE ACCUEIL -->
+            <div id="accueilAPI" class="col py-3">
+                <h3>API BOIS Version 1.0</h3>
+                <p class="lead">Cette documentation a pour but de vous presenter les differents appels possibles avec l'API Bois. Cette API est destinee a gerer l'ESP d'un four a bois.</p>
+                <div class="col-6 offset-3">
+                    <!--<h5 class="mt-4"> <span class="p-2 bg-light shadow rounded text-success"> Version 1.3.8</span> - 4th Jun 2020</h5>
+                    <ul class="list-unstyled mt-3">
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Latest Update Bootstrap v4.5</li>
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Latest Update jQuery v3.5.1</li>
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Latest Update Material Design Icons v5.3.45</li>
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>New <b>RTL Version</b> (Only CSS Base)</li>
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>New <b>Dark Version</b> (Only CSS Base)</li>
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>New <b>Dark RTL Version</b> (Only CSS Base)</li>
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Added 6 Colors scheme</li>
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Fixed some responsive issues</li>
+                    </ul>-->
+                    <h5 class="mt-4"> <span class="p-2 bg-light shadow rounded text-success"> Version 0.1.0</span> - 30 Aout 2021</h5>
+                    <ul class="list-unstyled mt-3">
+                        <li class="text-muted ml-3"><i class="mdi mdi-circle-medium mr-2"></i>Publication initiale</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- FIN ZONE ACCUEIL -->
+            <!-- FICHES COMPTE -->
+            <!-- ZONE CREER COMPTE -->
+            <div id="creerCompte" class="col py-3 d-none">
+                <div class="col-8 offset-2">
+                    <div class="row">
+                        <h3>Creer un compte</h3>
+                    </div>
+                    <div class="row">
+                        <h4>URL d'appel</h4>
+                        <div class="d-flex justify-content-between bg-light ml-2 px-2 py-2">
+                            <div class="font-monospace col-4">/nouvelUtilisateur</div>
+                            <div class="align-middle"><span class="badge bg-success">POST</span></div>
+                        </div>
+                    </div>
+                    <div class="mt-4 w-100">
+                        <div class="alert alert-warning w-100" role="alert">
+                            Ce systeme est sécurisé par BCRYPT.
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Requete</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Reponse</a>
+                            </li>
+                          </ul>
+                          <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                <div class="row">
+                                    <h5>Body</h5>
+                                    <div class='row'>
+                                        <div class="col-2 align-middle"><span class="badge bg-success">POST</span></div>
+                                        <div class="col-10">Permet de créer un nouveau compte utilisateur.<br>Le nom de compte <span class="badge bg-secondary font-monospace">nomCompte</span> désigne le nom sous lequel l'utilisateur se connectera et le mot de passe <span class="badge bg-secondary font-monospace">motDePasse</span> sera utilisé pour valider son authentification.<br><span class="badge bg-warning text-dark">Méthode asynchrone</span></div>
+                                    </div>
+                                    <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                    <p><span class="fw-bold">Type:</span> Object</p>
+                                    <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                        <li class="list-group-item"><span class="fw-bold">nomCompte:</span> <span class="fst-italic">required (string)</span></li>
+                                        <li class="list-group-item"><span class="fw-bold">motDePasse:</span> <span class="fst-italic">required (string)</span></li>
+                                    </ul></p>
+                                    <p><span class="fw-bold">Exemple:</span></p>
+                                    <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                        <p>{<br>nomCompte : 'John Cena',<br> motDePasse : 'SaintPampamSurMer'<br>}</p>
+                                    </blockquote>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <div class="row mt-4">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-primary">200</span></h5>
+                                    <hr>
+                                    <p>Compte créé avec succès.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">code:</span> <span class="fst-italic">required (int)</span></li>
+                                            <li class="list-group-item"><span class="fw-bold">status:</span> <span class="fst-italic">required (string)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>code : 200,<br> status : "Compte(s) ajouté(s): 1" <br>}</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-danger">400</span></h5>
+                                    <hr>
+                                    <p>Une erreur est suurvenue pendant l'ajout du compte.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">code:</span> <span class="fst-italic">required (int)</span></li>
+                                            <li class="list-group-item"><span class="fw-bold">status:</span> <span class="fst-italic">required (string)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>code : 400,<br> status : "Erreur, impossible d'ajouter le compte!" <br>}</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN ZONE CREER COMPTE -->
+            <!-- ZONE CONNEXION -->
+            <div id="connexion" class="col py-3 d-none">
+                <div class="col-8 offset-2">
+                    <div class="row">
+                        <h3>Connexion</h3>
+                    </div>
+                    <div class="row">
+                        <h4>URL d'appel</h4>
+                        <div class="d-flex justify-content-between bg-light ml-2 px-2 py-2">
+                            <div class="font-monospace col-4">/connexion</div>
+                            <div class="align-middle"><span class="badge bg-success">POST</span></div>
+                        </div>
+                    </div>
+                    <div class="mt-4 w-100">
+                        <div class="alert alert-warning w-100" role="alert">
+                            Ce systeme est sécurisé par BCRYPT.
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link active" id="requeteConnexion-tab" data-bs-toggle="tab" href="#requeteConnexion" role="tab" aria-controls="requeteConnexion" aria-selected="true">Requete</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link" id="reponseConnexion-tab" data-bs-toggle="tab" href="#reponseConnexion" role="tab" aria-controls="reponseConnexion" aria-selected="false">Reponse</a>
+                            </li>
+                          </ul>
+                          <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="requeteConnexion" role="tabpanel" aria-labelledby="requeteConnexion-tab">
+                                <div class="row">
+                                    <h5>Body</h5>
+                                    <div class='row'>
+                                        <div class="col-2 align-middle"><span class="badge bg-success">POST</span></div>
+                                        <div class="col-10">Permet à un utilisateur de s'authentifier.<br>Le nom de compte <span class="badge bg-secondary font-monospace">nomCompte</span> désigne le nom sous lequel l'utilisateur se connectera, c'est le même que celui renseigné lors de la création du compte et le mot de passe <span class="badge bg-secondary font-monospace">motDePasse</span> sera utilisé pour valider son authentification.Là encore, c'est le même que celui renseigné lors de la création du compte.<br><span class="badge bg-info text-dark">Méthode synchrone</span></div>
+                                    </div>
+                                    <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                    <p><span class="fw-bold">Type:</span> Object</p>
+                                    <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                        <li class="list-group-item"><span class="fw-bold">nomCompte:</span> <span class="fst-italic">required (string)</span></li>
+                                        <li class="list-group-item"><span class="fw-bold">motDePasse:</span> <span class="fst-italic">required (string)</span></li>
+                                    </ul></p>
+                                    <p><span class="fw-bold">Exemple:</span></p>
+                                    <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                        <p>{<br>nomCompte : 'John Cena',<br> motDePasse : 'SaintPampamSurMer'<br>}</p>
+                                    </blockquote>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="reponseConnexion" role="tabpanel" aria-labelledby="reponseConnexion-tab">
+                                <div class="row mt-4">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-primary">200</span></h5>
+                                    <hr>
+                                    <p>Connexion au compte réalisée avec succès.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">code:</span> <span class="fst-italic">required (int)</span></li>
+                                            <li class="list-group-item"><span class="fw-bold">token:</span> <span class="fst-italic">required (string) Permet de garder en mémoire l'utilisateur connecté à l'application. Sert aussi à faire les vérifications d'authentification.</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>code : 200,<br> token : "&sDbemdY#EJgQJbSy@7%E5SH8" <br>}</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-danger">400</span></h5>
+                                    <hr>
+                                    <p>Une erreur est survenue pendant la tentative de connexion.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">code:</span> <span class="fst-italic">required (int)</span></li>
+                                            <li class="list-group-item"><span class="fw-bold">status:</span> <span class="fst-italic">required (string)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>code : 400,<br> status : "Erreur d'identifiants." <br>}</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN ZONE CONNEXION -->
+            <!-- ZONE VERIFIER COMPTE -->
+            <div id="verifierCompte" class="col py-3 d-none">
+                <div class="col-8 offset-2">
+                    <div class="row">
+                        <h3>Vérifier un compte</h3>
+                    </div>
+                    <div class="row">
+                        <h4>URL d'appel</h4>
+                        <div class="d-flex justify-content-between bg-light ml-2 px-2 py-2">
+                            <div class="font-monospace col-4">/verifierExistance/{:token}</div>
+                            <div class="align-middle"><span class="badge bg-primary">GET</span></div>
+                        </div>
+                        <div class="mt-4 w-100">
+                            <div class="alert alert-warning w-100" role="alert">
+                                Ce systeme est sécurisé par BCRYPT.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link active" id="requeteVerifCompte-tab" data-bs-toggle="tab" href="#requeteVerifCompte" role="tab" aria-controls="requeteVerifCompte" aria-selected="true">Requete</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link" id="reponseVerifCompte-tab" data-bs-toggle="tab" href="#reponseVerifCompte" role="tab" aria-controls="reponseVerifCompte" aria-selected="false">Reponse</a>
+                            </li>
+                          </ul>
+                          <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="requeteVerifCompte" role="tabpanel" aria-labelledby="requeteVerifCompte-tab">
+                                <div class="row">
+                                    <h5>Params</h5>
+                                    <div class='row'>
+                                        <div class="col-2 align-middle"><span class="badge bg-primary">POST</span></div>
+                                        <div class="col-10">Permet de vérifier la véracité d'un utilisateur lors de sa navigation sur l'application.<br>Le token de compte <span class="badge bg-secondary font-monospace">token</span> désigne le token sous lequel le compte de l'utilisateur sera validé.<br><span class="badge bg-warning text-dark">Méthode asynchrone</span></div>
+                                    </div>
+                                    <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                    <p><span class="fw-bold">Type:</span> Object</p>
+                                    <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                        <li class="list-group-item"><span class="fw-bold">token:</span> <span class="fst-italic">required (string)</span></li>
+                                    </ul></p>
+                                    <p><span class="fw-bold">Exemple:</span></p>
+                                    <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                        <p>{<br>token : '&sDbemdY#EJgQJbSy@7%E5SH8'<br>}</p>
+                                    </blockquote>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="reponseVerifCompte" role="tabpanel" aria-labelledby="reponseVerifCompte-tab">
+                                <div class="row mt-4">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-primary">200</span></h5>
+                                    <hr>
+                                    <p>Vérification du compte réalisée avec succès.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">retour:</span> <span class="fst-italic">required (bool)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>retour : true <br>}</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-danger">400</span></h5>
+                                    <hr>
+                                    <p>Une erreur est survenue pendant la tentative d'authentification de la connexion.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">retour:</span> <span class="fst-italic">required (int)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>retour : false <br>}</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN ZONE VERIFIER COMPTE -->
+            <!-- FIN FICHES COMPTE -->
+
+            <!-- FICHE API -->
+            <!-- ZONE LISTE TYPES DE BOIS -->
+            <div id="typeBois" class="col py-3 d-none">
+                <div class="col-8 offset-2">
+                    <div class="row">
+                        <h3>Liste des types de bois</h3>
+                    </div>
+                    <div class="row">
+                        <h4>URL d'appel</h4>
+                        <div class="d-flex justify-content-between bg-light ml-2 px-2 py-2">
+                            <div class="font-monospace col-4">/bois</div>
+                            <div class="align-middle"><span class="badge bg-primary">GET</span></div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link active" id="requeteLTB-tab" data-bs-toggle="tab" href="#requeteLTB" role="tab" aria-controls="requeteLTB" aria-selected="true">Requete</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link" id="reponseLTB-tab" data-bs-toggle="tab" href="#reponseLTB" role="tab" aria-controls="reponseLTB" aria-selected="false">Reponse</a>
+                            </li>
+                          </ul>
+                          <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="requeteLTB" role="tabpanel" aria-labelledby="requeteLTB-tab">
+                                <div class="row">
+                                    <h5>Params</h5>
+                                    <div class='row'>
+                                        <div class="col-2 align-middle"><span class="badge bg-primary">GET</span></div>
+                                        <div class="col-10">Permet de récupérer la liste des type de bois possible.<br><span class="badge bg-warning text-dark">Méthode asynchrone</span></div>
+                                    </div>
+                                    <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                    <p><span class="fw-bold">Type:</span> Object</p>
+                                    <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                        <li class="list-group-item"><span class="fst-italic">Aucune information requise</span></li>
+                                    </ul></p>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="reponseLTB" role="tabpanel" aria-labelledby="reponseLTB-tab">
+                                <div class="row mt-4">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-primary">200</span></h5>
+                                    <hr>
+                                    <p>Liste des types de bois obtenue avec succès.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">result:</span> <span class="fst-italic">required (Object list)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>[<br>
+                                                {<br>
+                                                    "id": 1,<br>
+                                                    "nom": "Erable"<br>
+                                                },<br>
+                                                {<br>
+                                                    "id": 2,<br>
+                                                    "nom": "Erable du japon"<br>
+                                                }<br>
+                                            ]</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-danger">400</span></h5>
+                                    <hr>
+                                    <p>Une erreur est survenue pendant la récupération des types de bois.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">code:</span> <span class="fst-italic">required (int)</span></li>
+                                            <li class="list-group-item"><span class="fw-bold">status:</span> <span class="fst-italic">required (string)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>code : 400 <br>
+                                            status: "Aucun type de bois disponible."<br>}</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN ZONE LISTE TYPES DE BOIS -->
+            <!-- ZONE FICHE TYPE DE BOIS -->
+            <div id="ficheTypeBois" class="col py-3 d-none">
+                <div class="col-8 offset-2">
+                    <div class="row">
+                        <h3>Fiche type de bois</h3>
+                    </div>
+                    <div class="row">
+                        <h4>URL d'appel</h4>
+                        <div class="d-flex justify-content-between bg-light ml-2 px-2 py-2">
+                            <div class="font-monospace col-4">/obtenirBois/{:idBois}</div>
+                            <div class="align-middle"><span class="badge bg-primary">GET</span></div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link active" id="requeteFTB-tab" data-bs-toggle="tab" href="#requeteFTB" role="tab" aria-controls="requeteFTB" aria-selected="true">Requete</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <a class="nav-link" id="reponseFTB-tab" data-bs-toggle="tab" href="#reponseFTB" role="tab" aria-controls="reponseFTB" aria-selected="false">Reponse</a>
+                            </li>
+                          </ul>
+                          <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="requeteFTB" role="tabpanel" aria-labelledby="requeteFTB-tab">
+                                <div class="row">
+                                    <h5>Params</h5>
+                                    <div class='row'>
+                                        <div class="col-2 align-middle"><span class="badge bg-primary">GET</span></div>
+                                        <div class="col-10">Permet de récupérer un type de bois.<br><span class="badge bg-warning text-dark">Méthode asynchrone</span></div>
+                                    </div>
+                                    <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                    <p><span class="fw-bold">Type:</span> Object</p>
+                                    <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                        <li class="list-group-item"><span class="fw-bold">idBois:</span> <span class="fst-italic">required (int)</span></li>
+                                    </ul></p>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="reponseFTB" role="tabpanel" aria-labelledby="reponseFTB-tab">
+                                <div class="row mt-4">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-primary">200</span></h5>
+                                    <hr>
+                                    <p>Un type de bois a été obtenu avec succès.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">result:</span> <span class="fst-italic">required (Object list)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>
+                                                    "id": 1,<br>
+                                                    "nom": "Erable",<br>
+                                                    "type": "Dur",<br>
+                                                    "origine": "Etats Unis",<br>
+                                                    "sechage": 25,<br>
+                                                    "temperature": 25.75<br>
+                                                }<br></p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h5 class="fw-bold">HTTP Code statut <span class="text-danger">400</span></h5>
+                                    <hr>
+                                    <p>Une erreur est survenue pendant la récupération d'un type de bois.</p>
+                                    <div class="row">
+                                        <h6>Body</h6>
+                                        <p><span class="fw-bold">Media type:</span> Application/json</p>
+                                        <p><span class="fw-bold">Type:</span> Object</p>
+                                        <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                            <li class="list-group-item"><span class="fw-bold">code:</span> <span class="fst-italic">required (int)</span></li>
+                                            <li class="list-group-item"><span class="fw-bold">status:</span> <span class="fst-italic">required (string)</span></li>
+                                        </ul></p>
+                                        <p><span class="fw-bold">Exemple:</span></p>
+                                        <blockquote class="font-monospace bg-light ml-2 px-2 py-2">
+                                            <p>{<br>code : 400 <br>
+                                            status: "Type de bois inconnu."<br>}</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN ZONE FICHE TYPE DE BOIS -->
+            <!-- FIN FICHE API -->
+        </div>
+    </div>
+    <script type="text/javascript" src='gestionMenu.js'></script>
+</body>
+</html>
