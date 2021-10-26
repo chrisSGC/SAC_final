@@ -9,6 +9,8 @@ var cors = require('cors');
 const app = express();
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+
+const entities = require('html-entities');
 const saltL = 10;
 
 app.use(cors());
@@ -47,7 +49,7 @@ app.get('/api/bois', async (req, res) => {
             if(!results){
                 res.json({code: 400, status: "Aucun type de bois disponible."});
             }else{
-                res.json(results);
+                res.json({code: 200, donnees: results});
             }
         });
     }catch{
@@ -63,10 +65,26 @@ app.get('/api/obtenirBois/:idBois', async (req, res) => {
         const query = "SELECT * FROM bois WHERE id=?";
     
         connexion.query(query, [req.params.idBois], (error, results) => {
-            if(!results[0]){
+            if(!results){
                 res.json({code: 400, status: "Type de bois inconnu."});
             }else{
-                res.json(results[0]);
+                res.json({code: 200, donnees: results[0]});
+            }
+        });
+    }catch{
+        res.json({code: 400, status: "Type de bois inconnu."});
+    }
+});
+
+app.get('/api/obtenirBoisNom/:nomBois', async (req, res) => {
+    try{
+        const query = "SELECT * FROM bois WHERE nom LIKE '%"+entities.encode(req.params.nomBois)+"%'";
+    
+        connexion.query(query, (error, results) => {
+            if(!results){
+                res.json({code: 400, status: "Type de bois inconnu.", informations: error.message});
+            }else{
+                res.json({code: 200, donnees: results});
             }
         });
     }catch{
