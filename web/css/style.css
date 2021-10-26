@@ -1,0 +1,30 @@
+body{ margin: 0; padding: 0; box-sizing: border-box; font-size: 14px; }
+.zone{ width: 49%; margin: 10px; /*background-color: orange;*/ }
+body{ display: flex; }
+.zone table, .zone select, .zone .vueFour{ float: right; }
+table, .vueFour{ width: 95%; border: 3px solid #000000; }
+table th{ display: flex; justify-content: space-between; width: 50%;}
+select{ width: 95%; border: 3px solid #000000; line-height: 20px; background-color: #95D5A3; }
+.vueFour{ min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 5px; }
+.infosPied{ width: 100%; display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: 900; color: blue; }
+.temperature{ font-weight: 900; color: blue; }
+.dels{ display: flex; color: inherit; }
+button.demarrerFour{ background-color: #67B4F8; border-radius: 25px; padding: 10px 15px; font-weight: 900; font-size: 18px; border: 0; cursor: pointer; }
+.delJaune, .delVerte{ margin-right: 5px; }
+.delJaune{ margin-left: 5px; }
+/*.delRouge, .delJaune, .delVerte{ width: 15px; height: 15px; background-color: #000000; border: 2px solid #000000; border-radius: 50%; }
+.delRouge.active{ background-color: red!important; }
+.delJaune.active{ background-color: yellow!important; }
+.delVerte.active{ background-color: green!important; }*/
+
+.delRouge, .delJaune, .delVerte{ width: 15px; height: 15px; color: #000000; }
+.delRouge.active{ color: red!important; }
+.delJaune.active{ color: yellow!important; }
+.delVerte.active{ color: green!important; }
+
+img{ width: 50%; height: auto; margin: auto; display: block; }
+
+@media (max-width: 768px) {
+	body{ flex-direction: column; }
+    .zone{ width: 90%; margin: auto; }
+}
