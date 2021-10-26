@@ -26,6 +26,9 @@ void MyServer::initAllRoutes() {
         return;
     }
 
+    // Permet d'envoyer l'ensemble des fichiers css et js en meme temps
+    this->serveStatic("/", SPIFFS, "/assets/");
+
     //Route initiale (page html)
     this->on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/index.html", "text/html");

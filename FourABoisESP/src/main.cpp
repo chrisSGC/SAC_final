@@ -49,25 +49,23 @@
                 script.js               V1.0    JS (fonctions JavaScript)
               
  * */
-
-#include <iostream>
-#include <string>
-
-#include <Arduino.h>
-#include <ArduinoJson.h>
-
-#include "myFunctions.cpp" //fonctions utilitaires
-
+// Using nécessaires au projet
 using namespace std;
 
+// Include des classes nécessaires au projet
+#include <iostream>
+#include <string>
+#include <Arduino.h>
+#include <ArduinoJson.h>
+#include "myFunctions.cpp" //fonctions utilitaires
 #include <HTTPClient.h>
 #include <WiFiManager.h>
+#include "MyServer.h"
+
 WiFiManager wm;
 #define WEBSERVER_H
 
-//Pour la gestion du serveur ESP32
-#include "MyServer.h"
-MyServer *myServer = NULL;
+MyServer *serveur = NULL; // Serveur sur l'ESP32
 
 //Variable pour la connection Wifi
 const char *SSID = "SAC_CHRIS_";
@@ -77,7 +75,7 @@ String ssIDRandom;
 //fonction statique qui permet aux objets d'envoyer des messages (callBack) 
 //  arg0 : Action 
 // arg1 ... : Parametres
-std::string CallBackMessageListener(string message) {
+std::string CallBackMessageListener(string message){
     while(replaceAll(message, std::string("  "), std::string(" ")));
 
     //Décortiquer le message
@@ -93,7 +91,7 @@ std::string CallBackMessageListener(string message) {
     string arg9 = getValue(message, ' ', 9);
     string arg10 = getValue(message, ' ', 10);
   
-    if (string(actionToDo.c_str()).compare(string("action")) == 0) {
+    if(string(actionToDo.c_str()).compare(string("action")) == 0){
         return(String("Ok").c_str());
     }
    
@@ -105,7 +103,7 @@ void setup() {
     Serial.begin(9600);
     delay(100);
 
- //Connection au WifiManager
+    // Permet la connexion au WifiManager
     String ssIDRandom, PASSRandom;
     String stringRandom;
     stringRandom = get_random_string(4).c_str();
@@ -115,11 +113,12 @@ void setup() {
     PASSRandom = PASSWORD;
     PASSRandom = PASSRandom + stringRandom;
 
+    // Permet l'affichage des identifiants du wifi
 	char strToPrint[128];
     sprintf(strToPrint, "Identification : %s   MotDePasse: %s", ssIDRandom.c_str(), PASSRandom.c_str());
     Serial.println(strToPrint);
 
-
+    // Affiche une erreur en cas d'echec
 	if (!wm.autoConnect(ssIDRandom.c_str(), PASSRandom.c_str())){
         Serial.println("Erreur de connexion.");
     } else {
@@ -127,9 +126,9 @@ void setup() {
     }
 
     // ----------- Routes du serveur ----------------
-    myServer = new MyServer(80);
-    myServer->initAllRoutes();
-    myServer->initCallback(&CallBackMessageListener);
+    serveur = new MyServer(80);
+    serveur->initAllRoutes();
+    serveur->initCallback(&CallBackMessageListener);
 }
 
 void loop() {
