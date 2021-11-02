@@ -18,28 +18,29 @@ window.onload = () => {
 const verifConnexion = async () => {
     let data = {nomCompte: document.getElementById("floatingInput").value, motDePasse: document.getElementById("floatingPassword").value};
 
-    const response = await fetch(URL_API+'connexion?nomCompte='+data.nomCompte+'&motDePasse='+data.motDePasse, {
-    //const response = await fetch(URL_API+'api/connexion', {
-        method: "GET", 
+    //const response = await fetch(URL_API+'connexion?nomCompte='+data.nomCompte+'&motDePasse='+data.motDePasse, {
+    const response = await fetch(URL_API+'connexion', {
+        method: "POST", 
         //body: JSON.stringify(data),
-        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
+        body: "nomCompte="+data.nomCompte+"&motDePasse="+data.motDePasse,
+        //headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
     });
 
     const myJson = await response.json();
 
     console.log(myJson);
 
-    /*if(typeof myJson.token !== 'undefined'){
+    if(typeof myJson.token !== 'undefined'){
         // On stocke l'id de l'utilisateur
         localStorage.setItem('token', myJson.token);
 
         // Redirection vers l'application
-        window.location.replace("application.html");
+        window.location.replace("application");
     }else{
         // Afficher une alerte d'erreur
         document.getElementById("mauvaisId").innerHTML = '<div class="alert alert-danger" role="alert">Identifiants incorrects. Merci de ré-essayer!</div>';
         
         // vider les champs
         document.getElementById("floatingInput").value = document.getElementById("floatingPassword").value = "";
-    }*/
+    }
 }

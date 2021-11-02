@@ -137,14 +137,17 @@ app.post("/api/connexion", (req, res) => {
         const query = "SELECT token, mot_de_passe FROM compte WHERE nom=?";
         connexion.query(query, [req.body.nomCompte], (error, results) => {
             if (error) throw res.json({status: error});
+            console.log(4);
             if(!results[0]){
                 res.json({status: "Not found"});
             }else{
                 try{
                     if(bcrypt.compare(req.body.motDePasse, results[0].mot_de_passe)){
+                        console.log(1);
                         res.json({code: 200, token: results[0].token});
                     }else{
                         res.json({code: 400, status: "Erreur d'identifiants."});
+                        console.log(2);
                     }
                 }catch{
                     res.json({code: 400, status: "Erreur d'identifiants."});

@@ -49,36 +49,68 @@ void MyServer::initAllRoutes() {
         request->send(SPIFFS, "/images/logoSAC.PNG", "image/png");
     });*/
 
-    this->on("/connexion", HTTP_GET, [](AsyncWebServerRequest *request) {
+    this->on("/connexion", HTTP_POST, [](AsyncWebServerRequest *request) {
     //this->on("/connexion", HTTP_POST, [](AsyncWebServerRequest *request) {
         //HTTPClient http;
-        Serial.println("ICI");
+        //Serial.println("ICI");
         /*String apiSAC = "http://172.16.210.7:3000/api/connexion";
         http.begin(apiSAC);
         http.addHeader("Content-Type", "application/json");
-        int httpResponseCode = http.POST("{\"nomCompte\":\""++"\",\"motDePasse\":\"BME280\"}");
+        String paramNomCompte = request->getParam("nomCompte")->value().c_str();
+        String paramMotDePasse = request->getParam("motDePasse")->value().c_str();
+        String contentPOST = "{\"nomCompte\":\""+paramNomCompte+"\",\"motDePasse\":\""+paramMotDePasse+"\"}";
+        int httpResponseCode = http.POST();
         String response = http.getString();*/
 
-        if(request->hasParam("nomCompte")){
+        /*if(request->hasParam("nomCompte")){
             Serial.println("LA");
         }
 
         if(request->hasArg("nomCompte")){
             Serial.println("TDC");
-        }
-        /** POST FUNCTIONNALITY ACCORDING TO DOCUMENTATION
-        if(request->hasParam("nomCompte", true)){
-            Serial.println("LA");
-        }
-
-        if(request->hasArg("nomCompte", true)){
-            Serial.println("TDC");
         }*/
+        /** POST FUNCTIONNALITY ACCORDING TO DOCUMENTATION*/
+        if((request->hasParam("nomCompte", true)) && (request->hasParam("motDePasse", true))){
+            //Serial.println("a");
+            HTTPClient http;
+            //Serial.println("b");
+            String apiSAC = "http://172.16.210.7:3000/api/connexion";
+            //Serial.println("c");
+            http.begin(apiSAC);
+            //Serial.println("d");
+            http.addHeader("Accept", "application/json");
+            http.addHeader("Content-Type", "application/json");
+            //Serial.println("e");
+
+            AsyncWebParameter* paramNomCompte = request->getParam("nomCompte", true);
+            //Serial.println("f");
+            String a = paramNomCompte->value().c_str();
+            //Serial.println("g");
+            AsyncWebParameter* paramMotDePasse = request->getParam("motDePasse", true);
+            //Serial.println("h");
+            String b = paramMotDePasse->value().c_str();
+            //Serial.println("i");
+            String contentPOST = "{\"nomCompte\":\""+a+"\",\"motDePasse\":\""+b+"\"}";
+            //Serial.println("j");
+
+            http.POST(contentPOST.c_str());
+            //Serial.println("k");
+
+            String response = http.getString();
+            /*Serial.println("l");
+
+            Serial.println("LA");
+            Serial.println(response);*/
+
+            request->send(200, "text/plain", response);
+        }else{
+            request->send(404, "text/plain", "12");
+        }
 
         //Serial.println(request->getParam("nomCompte")->value().c_str());
         //Serial.println(request->getParam("motDePasse")->value().c_str());
 
-        request->send(200, "text/plain", "12");
+        //request->send(200, "text/plain", "12");
     });
 
     this->on("/listeBois", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -102,6 +134,10 @@ void MyServer::initAllRoutes() {
             http.GET();
 
             String response = http.getString();
+
+            /**
+             * MISE EN FORME POUR ENVOYER LES INFOS AU MAIN SUR LE BOIS EN QUESTION
+             * */
 
             request->send(200, "text/plain", response);
         }else if(request->hasParam("nomBois")){

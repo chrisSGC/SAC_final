@@ -72,8 +72,13 @@ const char *SSID = "SAC_CHRIS_";
 const char *PASSWORD = "sac_";
 String ssIDRandom;
 
-float temperatureMin;
-float temp;
+float temperatureActuelle;
+int dureeActuelle;
+
+// DONNEES LIEES AU BOIS
+int dureeNecessaire;
+float tempMiniBois;
+String nomBois;
 
 // SENSEUR DE TEMPERATURE
 #include "TemperatureStub.h"
@@ -106,15 +111,17 @@ std::string CallBackMessageListener(string message){
     if(string(actionToDo.c_str()).compare(string("action")) == 0){
         return(String("Ok").c_str());
     }else if(string(actionToDo.c_str()).compare(string("definirTypeBois")) == 0) {
-        temperatureMin = ::atof(arg1.c_str());
+        tempMiniBois = ::atof(arg1.c_str());
         Serial.print("Température a depasser : ");
         Serial.println(arg1.c_str());
 
         return(String("Ok").c_str());
     }else if(string(actionToDo.c_str()).compare(string("obtenirInfosFour")) == 0) {
-        return(String(temp).c_str());
+        String a = String(temperatureActuelle).c_str();
+        String contentPOST = "{\"code\": 200, \"donnees\": {\"temperatureActuelle\":"+a+",\"nomBois\":\""+nomBois+"\",\"tempMiniBois\":"+String(tempMiniBois).c_str()+",\"dureeNecessaire\":"+String(dureeNecessaire).c_str()+",\"dureeActuelle\":"+String(dureeActuelle).c_str()+"}}";
+        return(contentPOST.c_str());
     }else if(string(actionToDo.c_str()).compare(string("lancerFour")) == 0) {
-        return(String(temp).c_str());
+        return(String(temperatureActuelle).c_str());
     }
    
     std::string result = "";
@@ -126,8 +133,11 @@ void setup() {
     delay(100);
 
     // On initialise les deux temepratures a 0
-    temp = 0;
-    temperatureMin = 0;
+    temperatureActuelle = 0;
+    tempMiniBois = 0;
+    dureeActuelle = 0;
+    dureeNecessaire = 0;
+    nomBois = "";
 
 	// Initialisation de la DEL Rouge
 	pinMode(GPIO_PIN_LED_ROUGE, OUTPUT);
@@ -166,9 +176,9 @@ void setup() {
 
 void loop() {
 	// Recuperation de la température
-    temp = temperatureStub->getTemperature();
+    temperatureActuelle = temperatureStub->getTemperature();
 
-	if(temp > temperatureMin){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
+	if(temperatureActuelle > tempMiniBois){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
         digitalWrite(GPIO_PIN_LED_ROUGE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur
 	}else{ 
         digitalWrite(GPIO_PIN_LED_ROUGE, LOW); // On coupe la DEL car la temperature est inferieure ou egale a la temperature entree par l'utilisateur

@@ -43,12 +43,12 @@ window.onload = async () => {
 
     const myJson = await response.json();
 
-    if(myJson){
+    if(myJson.code === 200){
         var select = document.getElementById('typeBoisSelect');
-        myJson.map((ligne) => { var opt = document.createElement('option'); opt.value = ligne.id; opt.innerHTML = ligne.nom; select.appendChild(opt); });
-    }
+        myJson.donnees.map((ligne) => { var opt = document.createElement('option'); opt.value = ligne.id; opt.innerHTML = ligne.nom; select.appendChild(opt); });
+    }E
 
-    //function getFromESP_getAllWoodOptions() {
+    //function getFromSP_getAllWoodOptions() {
         /*var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
@@ -80,33 +80,39 @@ document.getElementById('typeBoisSelect').addEventListener('change', async () =>
     definirTempsActuel(tempsActuel);
 
     if(idBois != 0){
-        // get des donnees 'http://172.16.210.211/listeBois'
-        /*const response = await fetch(URL_API+'api/obtenirBois/'+idBois, {
-            method: "GET", 
-            headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
-        });*/
         const response = await fetch('http://172.16.210.211/obtenirBois?idBois='+idBois, { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
-        /*const response = await fetch('http://172.16.210.211/obtenirBois', { method: "GET", params: { idBois: idBois }, headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });*/
-
         const myJsonOB = await response.json();
 
         // si resultat, on affiche les donnees
-        if(myJsonOB){
-            console.log(myJsonOB);
-
+        if(myJsonOB.code === 200){
             // On met en place les donneees
-            document.getElementById('nomBoisDet').innerHTML = myJsonOB.nom;
-            document.getElementById('typeBoisDet').innerHTML = myJsonOB.type;
-            document.getElementById('origineBoisDet').innerHTML = myJsonOB.origine;
-            document.getElementById('tempsSechBoisDet').innerHTML = myJsonOB.sechage;
-            document.getElementById('temperatureBoisDet').innerHTML = myJsonOB.temperature;
+            document.getElementById('nomBoisDet').innerHTML = myJsonOB.donnees.nom;
+            document.getElementById('typeBoisDet').innerHTML = myJsonOB.donnees.type;
+            document.getElementById('origineBoisDet').innerHTML = myJsonOB.donnees.origine;
+            document.getElementById('tempsSechBoisDet').innerHTML = myJsonOB.donnees.sechage;
+            document.getElementById('temperatureBoisDet').innerHTML = myJsonOB.donnees.temperature;
 
-            document.getElementById('tempsTotal').innerHTML = myJsonOB.sechage;
-            document.getElementById('typeBoisChauff').innerHTML = myJsonOB.nom;
-            document.getElementById('temperatureMini').innerHTML = "min "+myJsonOB.temperature+" Celcius";
+            document.getElementById('tempsTotal').innerHTML = myJsonOB.donnees.sechage;
+            document.getElementById('typeBoisChauff').innerHTML = myJsonOB.donnees.nom;
+            document.getElementById('temperatureMini').innerHTML = "min "+myJsonOB.donnees.temperature+" Celcius";
         }
     }else{
-        
         document.getElementById('nomBoisDet').innerHTML = document.getElementById('typeBoisDet').innerHTML = document.getElementById('origineBoisDet').innerHTML = document.getElementById('tempsSechBoisDet').innerHTML = document.getElementById('temperatureBoisDet').innerHTML = document.getElementById('tempsTotal').innerHTML = document.getElementById('typeBoisChauff').innerHTML = document.getElementById('temperatureMini').innerHTML = "";
     }
 });
+
+setInterval(async () => {
+    const response = await fetch('http://172.16.210.211/obtenirInfosFour', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
+
+    const myJsonSec = await response.json();
+    // si resultat, on affiche les donnees
+
+    if(myJsonSec.code === 200){
+        // On met en place les donneees
+        document.getElementById('typeBoisChauff').innerHTML = myJsonSec.donnees.nomBois;
+        document.getElementById('tempVal').innerHTML = myJsonSec.donnees.temperatureActuelle;
+        document.getElementById('tempsActuel').innerHTML = myJsonSec.donnees.dureeActuelle;
+        document.getElementById('tempsTotal').innerHTML = myJsonSec.donnees.dureeNecessaire;
+        document.getElementById('temperatureMini').innerHTML = myJsonSec.donnees.tempMiniBois;
+    }
+}, 1000);
