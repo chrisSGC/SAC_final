@@ -13,9 +13,7 @@ CallbackType MyServer::ptrToCallBackFunction = NULL;
 
 //Exemple pour appeler une fonction CallBack
 //if (ptrToCallBackFunction) (*ptrToCallBackFunction)(stringToSend); 
-void MyServer::initCallback(CallbackType callback) {
-    ptrToCallBackFunction = callback;
-}
+void MyServer::initCallback(CallbackType callback){ ptrToCallBackFunction = callback; }
 
 void MyServer::initAllRoutes() { 
     currentTemperature = 3.3f;
@@ -30,16 +28,12 @@ void MyServer::initAllRoutes() {
     this->serveStatic("/", SPIFFS, "/assets/");
 
     //Route initiale (page html)
-    this->on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/index.html", "text/html");
-    });
+    this->on("/", HTTP_GET, [](AsyncWebServerRequest *request){ request->send(SPIFFS, "/index.html", "text/html"); });
 
-    this->on("/application", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/application.html", "text/html");
-    });
+    this->on("/application", HTTP_GET, [](AsyncWebServerRequest *request){ request->send(SPIFFS, "/application.html", "text/html"); });
 
     //Route du script JavaScript
-    this->on("/script/app.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+   /* this->on("/script/app.js", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/script/app.js", "text/javascript");
     });
 
@@ -53,9 +47,10 @@ void MyServer::initAllRoutes() {
 
     this->on("/images/logoSAC.PNG", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/images/logoSAC.PNG", "image/png");
-    });
+    });*/
 
     this->on("/connexion", HTTP_GET, [](AsyncWebServerRequest *request) {
+    //this->on("/connexion", HTTP_POST, [](AsyncWebServerRequest *request) {
         //HTTPClient http;
         Serial.println("ICI");
         /*String apiSAC = "http://172.16.210.7:3000/api/connexion";
@@ -71,9 +66,18 @@ void MyServer::initAllRoutes() {
         if(request->hasArg("nomCompte")){
             Serial.println("TDC");
         }
+        /** POST FUNCTIONNALITY ACCORDING TO DOCUMENTATION
+        if(request->hasParam("nomCompte", true)){
+            Serial.println("LA");
+        }
+
+        if(request->hasArg("nomCompte", true)){
+            Serial.println("TDC");
+        }*/
 
         //Serial.println(request->getParam("nomCompte")->value().c_str());
         //Serial.println(request->getParam("motDePasse")->value().c_str());
+
         request->send(200, "text/plain", "12");
     });
 
@@ -84,51 +88,72 @@ void MyServer::initAllRoutes() {
         http.GET();
         String response = http.getString();
 
-        /*String tempToSend;
-        StaticJsonDocument<2048> doc;
-        deserializeJson(doc, response);
-        JsonObject obj1 = doc.as<JsonObject>();
-        std::string wood;
-        String  woodName;
-      
-        for (JsonPair kv1 : obj1) {
-            wood = kv1.key().c_str();
-            Serial.print("Element : ");Serial.println(wood.c_str());
-
-            JsonObject elem = obj1[wood];
-            woodName = elem["nom"].as<String>();
-            if(tempToSend!="") tempToSend += "&";
-            tempToSend +=  String(wood.c_str()) + String("&") + String(woodName.c_str());
-           
-            Serial.print(woodName);Serial.print(" ");*/
-                          
-            //Pour parcourir les éléments de l'objet
-            //for (JsonPair kv2 : elem) {
-            //    Serial.print("   Sous element : ");Serial.print(kv2.key().c_str());
-            //    Serial.print("    :  ");Serial.println(kv2.value().as<char*>());
-            //    }
-            //}
-        
-        //request->send(200, "text/plain", tempToSend);
         request->send(200, "text/plain", response);
     });
     
     this->on("/obtenirBois", HTTP_GET, [](AsyncWebServerRequest *request) {
         if(request->hasParam("idBois")){
             HTTPClient http;
-            //AsyncWebParameter* p = request->getParam("idBois");
+
             String paramIdBois = request->getParam("idBois")->value().c_str();
             String woodApiRestAddress = "http://172.16.210.7:3000/api/obtenirBois/"+paramIdBois;
+
             http.begin(woodApiRestAddress);
             http.GET();
+
             String response = http.getString();
 
             request->send(200, "text/plain", response);
-            /*Serial.println(paramIdBois);
-            Serial.println(response);*/
+        }else if(request->hasParam("nomBois")){
+            HTTPClient http;
+
+            String paramNomBois = request->getParam("nomBois")->value().c_str();
+            String woodApiRestAddress = "http://172.16.210.7:3000/api/obtenirBoisNom/"+paramNomBois;
+
+            http.begin(woodApiRestAddress);
+            http.GET();
+
+            String response = http.getString();
+
+            request->send(200, "text/plain", response);
         }else{
             request->send(400, "text/plain", "Envoyez les parametres requis.");
         }
+    });
+
+    this->on("/obtenirInfosFour", HTTP_GET, [](AsyncWebServerRequest *request) {
+        std::string repString = "";
+        if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("obtenirInfosFour"); //Exemple pour appeler une fonction CallBack
+        String resultatTemperature = String(repString.c_str());
+
+        request->send(200, "text/plain", resultatTemperature);
+    });
+
+    this->on("/definirTypeBois", HTTP_POST, [](AsyncWebServerRequest *request) {
+        /**
+         * 1/ obtenir infos du type de bois
+         * 2/ Passer ces infos au main
+         * 3/ f(type de retour) on envoi le statut d'etat approprié
+         * 
+         * */
+        std::string repString = "";
+        if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("obtenirInfosFour"); //Exemple pour appeler une fonction CallBack
+        String resultatTemperature = String(repString.c_str());
+
+        request->send(200, "text/plain", resultatTemperature);
+    });
+
+    this->on("/lancerFour", HTTP_POST, [](AsyncWebServerRequest *request) {
+        /**
+         * 1/ envoi de la requete au main
+         * 2/ f(type de retour) on envoi le statut d'etat approprié
+         * 
+         * */
+        std::string repString = "";
+        if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("lancerFour"); //Exemple pour appeler une fonction CallBack
+        String resultatTemperature = String(repString.c_str());
+
+        request->send(200, "text/plain", resultatTemperature);
     });
 
     /*this->on("/listeBois", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -140,9 +165,7 @@ void MyServer::initAllRoutes() {
         request->send(200, "text/plain", response);
     });*/
    
-    this->onNotFound([](AsyncWebServerRequest *request){
-        request->send(404, "text/plain", "Page Not Found");
-    });
+    this->onNotFound([](AsyncWebServerRequest *request){ request->send(404, "text/plain", "Page Not Found"); });
     
     this->begin();
 };

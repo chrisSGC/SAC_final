@@ -105,13 +105,15 @@ std::string CallBackMessageListener(string message){
   
     if(string(actionToDo.c_str()).compare(string("action")) == 0){
         return(String("Ok").c_str());
-    }else if(string(actionToDo.c_str()).compare(string("changerTemperature")) == 0) {
+    }else if(string(actionToDo.c_str()).compare(string("definirTypeBois")) == 0) {
         temperatureMin = ::atof(arg1.c_str());
         Serial.print("Température a depasser : ");
         Serial.println(arg1.c_str());
 
         return(String("Ok").c_str());
-    }else if(string(actionToDo.c_str()).compare(string("recupererTemperature")) == 0) {
+    }else if(string(actionToDo.c_str()).compare(string("obtenirInfosFour")) == 0) {
+        return(String(temp).c_str());
+    }else if(string(actionToDo.c_str()).compare(string("lancerFour")) == 0) {
         return(String(temp).c_str());
     }
    
