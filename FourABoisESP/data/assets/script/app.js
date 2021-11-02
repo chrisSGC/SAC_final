@@ -1,4 +1,4 @@
-var URL_API = "http://localhost:3000/";
+var URL_API = "http://172.16.210.211/";
 var tempsActuel = 0;
 
 const verifConnexion = async () => {

@@ -72,6 +72,18 @@ const char *SSID = "SAC_CHRIS_";
 const char *PASSWORD = "sac_";
 String ssIDRandom;
 
+float temperatureMin;
+float temp;
+
+// SENSEUR DE TEMPERATURE
+#include "TemperatureStub.h"
+#define DHTPIN  15   // Pin utilisée par le senseur DHT22
+#define DHTTYPE DHT22  // Type de senseur utilisé: ici un DHT 22
+TemperatureStub *temperatureStub = NULL;
+
+// Information sur la DEL
+#define GPIO_PIN_LED_ROUGE 12 // La DEL est branchee sur le GPIO 12
+
 //fonction statique qui permet aux objets d'envoyer des messages (callBack) 
 //  arg0 : Action 
 // arg1 ... : Parametres
@@ -93,6 +105,14 @@ std::string CallBackMessageListener(string message){
   
     if(string(actionToDo.c_str()).compare(string("action")) == 0){
         return(String("Ok").c_str());
+    }else if(string(actionToDo.c_str()).compare(string("changerTemperature")) == 0) {
+        temperatureMin = ::atof(arg1.c_str());
+        Serial.print("Température a depasser : ");
+        Serial.println(arg1.c_str());
+
+        return(String("Ok").c_str());
+    }else if(string(actionToDo.c_str()).compare(string("recupererTemperature")) == 0) {
+        return(String(temp).c_str());
     }
    
     std::string result = "";
@@ -102,6 +122,17 @@ std::string CallBackMessageListener(string message){
 void setup() { 
     Serial.begin(9600);
     delay(100);
+
+    // On initialise les deux temepratures a 0
+    temp = 0;
+    temperatureMin = 0;
+
+	// Initialisation de la DEL Rouge
+	pinMode(GPIO_PIN_LED_ROUGE, OUTPUT);
+
+	// Initiation de la lecture de la température
+    temperatureStub = new TemperatureStub;
+    temperatureStub->init(DHTPIN, DHTTYPE); //Pin 15 et Type DHT22
 
     // Permet la connexion au WifiManager
     String ssIDRandom, PASSRandom;
@@ -132,4 +163,12 @@ void setup() {
 }
 
 void loop() {
+	// Recuperation de la température
+    temp = temperatureStub->getTemperature();
+
+	if(temp > temperatureMin){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
+        digitalWrite(GPIO_PIN_LED_ROUGE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur
+	}else{ 
+        digitalWrite(GPIO_PIN_LED_ROUGE, LOW); // On coupe la DEL car la temperature est inferieure ou egale a la temperature entree par l'utilisateur
+	}
 }

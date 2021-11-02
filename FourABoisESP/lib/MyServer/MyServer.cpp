@@ -34,7 +34,7 @@ void MyServer::initAllRoutes() {
         request->send(SPIFFS, "/index.html", "text/html");
     });
 
-    this->on("/application.html", HTTP_GET, [](AsyncWebServerRequest *request) {
+    this->on("/application", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/application.html", "text/html");
     });
 
@@ -53,6 +53,28 @@ void MyServer::initAllRoutes() {
 
     this->on("/images/logoSAC.PNG", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/images/logoSAC.PNG", "image/png");
+    });
+
+    this->on("/connexion", HTTP_GET, [](AsyncWebServerRequest *request) {
+        //HTTPClient http;
+        Serial.println("ICI");
+        /*String apiSAC = "http://172.16.210.7:3000/api/connexion";
+        http.begin(apiSAC);
+        http.addHeader("Content-Type", "application/json");
+        int httpResponseCode = http.POST("{\"nomCompte\":\""++"\",\"motDePasse\":\"BME280\"}");
+        String response = http.getString();*/
+
+        if(request->hasParam("nomCompte")){
+            Serial.println("LA");
+        }
+
+        if(request->hasArg("nomCompte")){
+            Serial.println("TDC");
+        }
+
+        //Serial.println(request->getParam("nomCompte")->value().c_str());
+        //Serial.println(request->getParam("motDePasse")->value().c_str());
+        request->send(200, "text/plain", "12");
     });
 
     this->on("/listeBois", HTTP_GET, [](AsyncWebServerRequest *request) {
