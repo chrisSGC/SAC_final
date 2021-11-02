@@ -74,6 +74,7 @@ String ssIDRandom;
 
 float temperatureActuelle;
 int dureeActuelle;
+bool etatFour;
 
 // DONNEES LIEES AU BOIS
 int dureeNecessaire;
@@ -121,7 +122,9 @@ std::string CallBackMessageListener(string message){
         String contentPOST = "{\"code\": 200, \"donnees\": {\"temperatureActuelle\":"+a+",\"nomBois\":\""+nomBois+"\",\"tempMiniBois\":"+String(tempMiniBois).c_str()+",\"dureeNecessaire\":"+String(dureeNecessaire).c_str()+",\"dureeActuelle\":"+String(dureeActuelle).c_str()+"}}";
         return(contentPOST.c_str());
     }else if(string(actionToDo.c_str()).compare(string("lancerFour")) == 0) {
-        return(String(temperatureActuelle).c_str());
+        etatFour = !etatFour;
+        String retour = (etatFour) ? "{\"code\": 200}" : "{\"code\": 400}";
+        return(retour.c_str());
     }
    
     std::string result = "";
@@ -138,6 +141,7 @@ void setup() {
     dureeActuelle = 0;
     dureeNecessaire = 0;
     nomBois = "";
+    etatFour = false;
 
 	// Initialisation de la DEL Rouge
 	pinMode(GPIO_PIN_LED_ROUGE, OUTPUT);

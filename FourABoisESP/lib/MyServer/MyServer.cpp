@@ -115,8 +115,8 @@ void MyServer::initAllRoutes() {
 
     this->on("/listeBois", HTTP_GET, [](AsyncWebServerRequest *request) {
         HTTPClient http;
-        String woodApiRestAddress = "http://172.16.210.7:3000/api/bois";
-        http.begin(woodApiRestAddress);
+        String apiSAC = "http://172.16.210.7:3000/api/bois";
+        http.begin(apiSAC);
         http.GET();
         String response = http.getString();
 
@@ -128,9 +128,9 @@ void MyServer::initAllRoutes() {
             HTTPClient http;
 
             String paramIdBois = request->getParam("idBois")->value().c_str();
-            String woodApiRestAddress = "http://172.16.210.7:3000/api/obtenirBois/"+paramIdBois;
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramIdBois;
 
-            http.begin(woodApiRestAddress);
+            http.begin(apiSAC);
             http.GET();
 
             String response = http.getString();
@@ -144,9 +144,9 @@ void MyServer::initAllRoutes() {
             HTTPClient http;
 
             String paramNomBois = request->getParam("nomBois")->value().c_str();
-            String woodApiRestAddress = "http://172.16.210.7:3000/api/obtenirBoisNom/"+paramNomBois;
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBoisNom/"+paramNomBois;
 
-            http.begin(woodApiRestAddress);
+            http.begin(apiSAC);
             http.GET();
 
             String response = http.getString();
@@ -194,8 +194,8 @@ void MyServer::initAllRoutes() {
 
     /*this->on("/listeBois", HTTP_GET, [](AsyncWebServerRequest *request) {
         HTTPClient http;
-        String woodApiRestAddress = "http://172.16.210.7:3000/api/bois";
-        http.begin(woodApiRestAddress);
+        String apiSAC = "http://172.16.210.7:3000/api/bois";
+        http.begin(apiSAC);
         http.GET();
         String response = http.getString();
         request->send(200, "text/plain", response);
