@@ -6,6 +6,7 @@
 */
 #include <Arduino.h>
 #include "MyServer.h"
+#include <ArduinoJson.h>
 using namespace std;
 
 typedef std::string (*CallbackType)(std::string);
@@ -166,14 +167,44 @@ void MyServer::initAllRoutes() {
     });
 
     this->on("/definirTypeBois", HTTP_POST, [](AsyncWebServerRequest *request) {
+        if(!(request->hasParam("idBois", true)) || !(request->hasParam("nomBois", true))){
+            request->send(400, "text/plain", "Envoyez les parametres requis.");
+        }
+
+        HTTPClient http;
         /**
          * 1/ obtenir infos du type de bois
          * 2/ Passer ces infos au main
          * 3/ f(type de retour) on envoi le statut d'etat approprié
          * 
          * */
+        if((request->hasParam("idBois", true))){
+            String paramIdBois = request->getParam("idBois")->value().c_str();
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramIdBois;
+        }else if((request->hasParam("nomBois", true))){
+            String paramNomBois = request->getParam("nomBois")->value().c_str();
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBoisNom/"+paramNomBois;
+        }
+            
+        http.begin(apiSAC);
+        http.GET();
+
+        String response = http.getString();
+
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, response);
+
+        int code = doc["code"];
+        String donnees = doc["donnees"];
+
+        DynamicJsonDocument docDeux(1024);
+        deserializeJson(docDeux, donnees);
+        float temperatureSechage = docDeux["temperature"];
+        float dureeSechage = docDeux["sechage"];
+        String nom = docDeux["nom"];
+
         std::string repString = "";
-        if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("obtenirInfosFour"); //Exemple pour appeler une fonction CallBack
+        if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("obtenirInfosFour "+temperatureSechage.c_str()+" "+dureeSechage.c_str()+" "+nom); //Exemple pour appeler une fonction CallBack
         String resultatTemperature = String(repString.c_str());
 
         request->send(200, "text/plain", resultatTemperature);

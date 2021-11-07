@@ -88,7 +88,9 @@ String nomBois;
 TemperatureStub *temperatureStub = NULL;
 
 // Information sur la DEL
-#define GPIO_PIN_LED_ROUGE 12 // La DEL est branchee sur le GPIO 12
+#define GPIO_PIN_DEL_ROUGE 12 // La DEL rouge est branchee sur le GPIO 12
+#define GPIO_PIN_DEL_VERT 14 //La DEL verte est branchée sur le GPIO14
+#define GPIO_PIN_DEL_JAUNE 27 // La DEL jaune est branchée sur le GPIO27
 
 //fonction statique qui permet aux objets d'envoyer des messages (callBack) 
 //  arg0 : Action 
@@ -113,11 +115,28 @@ std::string CallBackMessageListener(string message){
         return(String("Ok").c_str());
     }else if(string(actionToDo.c_str()).compare(string("definirTypeBois")) == 0) {
         tempMiniBois = ::atof(arg1.c_str());
+        dureeActuelle = ::atoi(arg1.c_str());
+        nomBois = arg3.c_str();
+
         Serial.print("Température a depasser : ");
         Serial.println(arg1.c_str());
 
+        Serial.print("Durée de sechage : ");
+        Serial.println(arg2.c_str());
+
+        Serial.print("Nom : ");
+        Serial.println(arg3.c_str());
+
         return(String("Ok").c_str());
     }else if(string(actionToDo.c_str()).compare(string("obtenirInfosFour")) == 0) {
+        /*DynamicJsonDocument doc(1024);
+        String a = String(temperatureActuelle).c_str();
+
+        doc["code"] = 200;
+        doc["donnees"] = "{\"temperatureActuelle\":"+a+",\"nomBois\":\""+nomBois+"\",\"tempMiniBois\":"+String(tempMiniBois).c_str()+",\"dureeNecessaire\":"+String(dureeNecessaire).c_str()+",\"dureeActuelle\":"+String(dureeActuelle).c_str()+"}";
+
+        return serializeJson(doc, Serial);*/
+
         String a = String(temperatureActuelle).c_str();
         String contentPOST = "{\"code\": 200, \"donnees\": {\"temperatureActuelle\":"+a+",\"nomBois\":\""+nomBois+"\",\"tempMiniBois\":"+String(tempMiniBois).c_str()+",\"dureeNecessaire\":"+String(dureeNecessaire).c_str()+",\"dureeActuelle\":"+String(dureeActuelle).c_str()+"}}";
         return(contentPOST.c_str());
@@ -143,8 +162,10 @@ void setup() {
     nomBois = "";
     etatFour = false;
 
-	// Initialisation de la DEL Rouge
-	pinMode(GPIO_PIN_LED_ROUGE, OUTPUT);
+	// Initialisation de la DEL Rouge,Verte et Jaune
+	pinMode(GPIO_PIN_DEL_ROUGE, OUTPUT);
+	pinMode(GPIO_PIN_DEL_VERT, OUTPUT);
+	pinMode(GPIO_PIN_DEL_JAUNE, OUTPUT);
 
 	// Initiation de la lecture de la température
     temperatureStub = new TemperatureStub;
@@ -176,6 +197,17 @@ void setup() {
     serveur = new MyServer(80);
     serveur->initAllRoutes();
     serveur->initCallback(&CallBackMessageListener);
+
+    for(a = 0; a < 2; a++){
+        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
+        digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH);
+        sleep(500);
+        digitalWrite(GPIO_PIN_DEL_ROUGE, LOW);
+        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
+        sleep(500);
+    }
 }
 
 void loop() {
@@ -183,8 +215,8 @@ void loop() {
     temperatureActuelle = temperatureStub->getTemperature();
 
 	if(temperatureActuelle > tempMiniBois){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
-        digitalWrite(GPIO_PIN_LED_ROUGE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur
+        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur
 	}else{ 
-        digitalWrite(GPIO_PIN_LED_ROUGE, LOW); // On coupe la DEL car la temperature est inferieure ou egale a la temperature entree par l'utilisateur
+        digitalWrite(GPIO_PIN_DEL_ROUGE, LOW); // On coupe la DEL car la temperature est inferieure ou egale a la temperature entree par l'utilisateur
 	}
 }
