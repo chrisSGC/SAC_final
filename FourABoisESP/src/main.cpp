@@ -198,15 +198,15 @@ void setup() {
     serveur->initAllRoutes();
     serveur->initCallback(&CallBackMessageListener);
 
-    for(a = 0; a < 2; a++){
+    for(int a = 0; a < 2; a++){
         digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
         digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
         digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH);
-        sleep(500);
+        delay(500);
         digitalWrite(GPIO_PIN_DEL_ROUGE, LOW);
         digitalWrite(GPIO_PIN_DEL_VERT, LOW);
         digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
-        sleep(500);
+        delay(500);
     }
 }
 

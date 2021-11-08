@@ -172,6 +172,7 @@ void MyServer::initAllRoutes() {
         }
 
         HTTPClient http;
+        String apiSAC = "http://172.16.210.7:3000/api/";
         /**
          * 1/ obtenir infos du type de bois
          * 2/ Passer ces infos au main
@@ -180,10 +181,10 @@ void MyServer::initAllRoutes() {
          * */
         if((request->hasParam("idBois", true))){
             String paramIdBois = request->getParam("idBois")->value().c_str();
-            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramIdBois;
+            apiSAC = apiSAC + "obtenirBois/"+paramIdBois;
         }else if((request->hasParam("nomBois", true))){
             String paramNomBois = request->getParam("nomBois")->value().c_str();
-            String apiSAC = "http://172.16.210.7:3000/api/obtenirBoisNom/"+paramNomBois;
+            apiSAC = apiSAC + "obtenirBoisNom/"+paramNomBois;
         }
             
         http.begin(apiSAC);
@@ -194,17 +195,18 @@ void MyServer::initAllRoutes() {
         DynamicJsonDocument doc(1024);
         deserializeJson(doc, response);
 
-        int code = doc["code"];
+        //int code = doc["code"];
         String donnees = doc["donnees"];
 
         DynamicJsonDocument docDeux(1024);
         deserializeJson(docDeux, donnees);
-        float temperatureSechage = docDeux["temperature"];
-        float dureeSechage = docDeux["sechage"];
-        String nom = docDeux["nom"];
+        std::string temperatureSechage = docDeux["temperature"];
+        std::string dureeSechage = docDeux["sechage"];
+        std::string nom = docDeux["nom"];
+
 
         std::string repString = "";
-        if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("obtenirInfosFour "+temperatureSechage.c_str()+" "+dureeSechage.c_str()+" "+nom); //Exemple pour appeler une fonction CallBack
+        if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("obtenirInfosFour "+temperatureSechage+" "+dureeSechage+" "+nom); //Exemple pour appeler une fonction CallBack
         String resultatTemperature = String(repString.c_str());
 
         request->send(200, "text/plain", resultatTemperature);
