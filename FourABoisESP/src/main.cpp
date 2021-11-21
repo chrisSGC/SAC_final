@@ -61,11 +61,32 @@ using namespace std;
 #include <HTTPClient.h>
 #include <WiFiManager.h>
 #include "MyServer.h"
+#include "MyOled.h"
+#include "MyOledView.h"
+#include "MyOledViewInitialisation.h"
+#include "MyOledViewWifiAp.h"
+#include "MyOledViewErrorWifiConnexion.h"
+#include <wire.h>
+#include "TemperatureStub.h"
 
 WiFiManager wm;
 #define WEBSERVER_H
+#define SCREEN_WIDTH 128        // OLED display width, in pixels
+#define SCREEN_HEIGHT 64        // OLED display height, in pixels
+#define OLED_RESET 4            // Reset pin # (or -1 if sharing Arduino reset pin)
+#define OLED_I2C_ADDRESS 0x3C   // Adresse I2C de l'écran Oled
+#define DHTPIN  15   // Pin utilisée par le senseur DHT22
+#define DHTTYPE DHT22  // Type de senseur utilisé: ici un DHT 22
+#define GPIO_PIN_DEL_ROUGE 12 // La DEL rouge est branchee sur le GPIO 12
+#define GPIO_PIN_DEL_VERT 14 //La DEL verte est branchée sur le GPIO14
+#define GPIO_PIN_DEL_JAUNE 27 // La DEL jaune est branchée sur le GPIO27
 
 MyServer *serveur = NULL; // Serveur sur l'ESP32
+MyOled *ecran = NULL;
+MyOledViewInitialisation *vueInitialisation = NULL;
+MyOledViewWifiAp *vueAP = NULL;
+MyOledViewErrorWifiConnexion *vueWFErreur = NULL;
+TemperatureStub *temperatureStub = NULL;
 
 //Variable pour la connection Wifi
 const char *SSID = "SAC_CHRIS_";
@@ -80,17 +101,6 @@ bool etatFour;
 int dureeNecessaire;
 float tempMiniBois;
 String nomBois;
-
-// SENSEUR DE TEMPERATURE
-#include "TemperatureStub.h"
-#define DHTPIN  15   // Pin utilisée par le senseur DHT22
-#define DHTTYPE DHT22  // Type de senseur utilisé: ici un DHT 22
-TemperatureStub *temperatureStub = NULL;
-
-// Information sur la DEL
-#define GPIO_PIN_DEL_ROUGE 12 // La DEL rouge est branchee sur le GPIO 12
-#define GPIO_PIN_DEL_VERT 14 //La DEL verte est branchée sur le GPIO14
-#define GPIO_PIN_DEL_JAUNE 27 // La DEL jaune est branchée sur le GPIO27
 
 //fonction statique qui permet aux objets d'envoyer des messages (callBack) 
 //  arg0 : Action 
