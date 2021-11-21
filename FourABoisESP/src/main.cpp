@@ -214,6 +214,9 @@ void loop() {
 	// Recuperation de la température
     temperatureActuelle = temperatureStub->getTemperature();
 
+    Serial.println(etatFour);
+    Serial.println(temperatureActuelle);
+
 	if(temperatureActuelle > tempMiniBois){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
         digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur
 	}else{ 

@@ -1,4 +1,4 @@
-var URL_API = "http://172.16.210.211/";
+const URL_API = "http://172.16.210.211/";
 var tempsActuel = 0;
 
 const verifConnexion = async () => {
@@ -116,3 +116,31 @@ setInterval(async () => {
         document.getElementById('temperatureMini').innerHTML = myJsonSec.donnees.tempMiniBois;
     }
 }, 1000);
+
+document.getElementById('demarrerFour').addEventListener('click', async () => {
+    let idBois = document.getElementById('typeBoisSelect').value;
+
+    console.log(idBois);
+    
+    /*const response = await fetch(URL_API+'definirTypeBois', { method: "POST", body: "idBois="+idBois, });*/
+    /*const response = await fetch(URL_API+'definirTypeBois', {
+    //const response = await fetch(URL_API+'definirTypeBois?idBois='+idBois, {
+        method: "POST", 
+        //body: JSON.stringify(data),
+        body: "idBois="+idBois,
+        //body: { idBois : idBois },
+        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
+    });*/
+    
+    const response = await fetch(URL_API+'lancerFour', {
+        method: "POST"
+    });
+    
+    /*const response = await fetch(URL_API+'definirTypeBois?idBois='+idBois, {
+        method: "GET"
+    });*/
+
+    const myJson = await response.json();
+
+    console.log(myJson);
+});

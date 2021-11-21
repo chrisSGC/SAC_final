@@ -72,7 +72,7 @@ void MyServer::initAllRoutes() {
         }*/
         /** POST FUNCTIONNALITY ACCORDING TO DOCUMENTATION*/
         if((request->hasParam("nomCompte", true)) && (request->hasParam("motDePasse", true))){
-            //Serial.println("a");
+            Serial.println("a");
             HTTPClient http;
             //Serial.println("b");
             String apiSAC = "http://172.16.210.7:3000/api/connexion";
@@ -136,9 +136,22 @@ void MyServer::initAllRoutes() {
 
             String response = http.getString();
 
-            /**
-             * MISE EN FORME POUR ENVOYER LES INFOS AU MAIN SUR LE BOIS EN QUESTION
-             * */
+            DynamicJsonDocument doc(1024);
+            deserializeJson(doc, response);
+
+            std::string code = doc["code"];
+            String donnees = doc["donnees"];
+
+            DynamicJsonDocument docDeux(1024);
+            deserializeJson(docDeux, donnees);
+            std::string temperatureSechage = docDeux["temperature"];
+            std::string dureeSechage = docDeux["sechage"];
+            std::string nom = docDeux["nom"];
+            std::string id = docDeux["id"];
+
+            std::string repString = "";
+            if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("definirTypeBois "+temperatureSechage+" "+dureeSechage+" "+id); //Exemple pour appeler une fonction CallBack
+            //String resultatTemperature = String(repString.c_str());
 
             request->send(200, "text/plain", response);
         }else if(request->hasParam("nomBois")){
@@ -166,13 +179,60 @@ void MyServer::initAllRoutes() {
         request->send(200, "text/plain", resultatTemperature);
     });
 
+    this->on("/definirTypeBois", HTTP_GET, [](AsyncWebServerRequest *request) {
+        
+            //Serial.println('p');
+
+        if((request->hasParam("idBois"))){
+            HTTPClient http;
+            String paramIdBois = request->getParam("idBois")->value().c_str();
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramIdBois;
+
+            
+            http.begin(apiSAC);
+            http.GET();
+
+            String response = http.getString();
+
+            DynamicJsonDocument doc(1024);
+            deserializeJson(doc, response);
+
+            //int code = doc["code"];
+            String donnees = doc["donnees"];
+
+            DynamicJsonDocument docDeux(1024);
+            deserializeJson(docDeux, donnees);
+            std::string temperatureSechage = docDeux["temperature"];
+            std::string dureeSechage = docDeux["sechage"];
+            std::string nom = docDeux["nom"];
+
+            std::string repString = "";
+            if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("definirTypeBois "+temperatureSechage+" "+dureeSechage+" "+nom); //Exemple pour appeler une fonction CallBack
+            String resultatTemperature = String(repString.c_str());
+
+            request->send(200, "text/plain", nom.c_str());
+        }
+    });
+
     this->on("/definirTypeBois", HTTP_POST, [](AsyncWebServerRequest *request) {
-        if(!(request->hasParam("idBois", true)) || !(request->hasParam("nomBois", true))){
+        /*if(!(request->hasParam("idBois", true)) || !(request->hasParam("nomBois", true))){
             request->send(400, "text/plain", "Envoyez les parametres requis.");
+        }*/
+
+            Serial.println('p');
+        if((request->hasParam("idBois", true))){
+            Serial.println('a');
+        }
+        if((request->hasParam("idBois"))){
+            Serial.println('c');
         }
 
-        HTTPClient http;
-        String apiSAC = "http://172.16.210.7:3000/api/";
+        if(request->hasArg("idBois")){
+            Serial.println('b');
+        }
+
+        /*HTTPClient http;
+        String apiSAC = "http://172.16.210.7:3000/api/";*/
         /**
          * 1/ obtenir infos du type de bois
          * 2/ Passer ces infos au main
@@ -180,36 +240,63 @@ void MyServer::initAllRoutes() {
          * 
          * */
         if((request->hasParam("idBois", true))){
+            HTTPClient http;
             String paramIdBois = request->getParam("idBois")->value().c_str();
-            apiSAC = apiSAC + "obtenirBois/"+paramIdBois;
-        }else if((request->hasParam("nomBois", true))){
-            String paramNomBois = request->getParam("nomBois")->value().c_str();
-            apiSAC = apiSAC + "obtenirBoisNom/"+paramNomBois;
-        }
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramIdBois;
+
             
-        http.begin(apiSAC);
-        http.GET();
+            http.begin(apiSAC);
+            http.GET();
 
-        String response = http.getString();
+            String response = http.getString();
 
-        DynamicJsonDocument doc(1024);
-        deserializeJson(doc, response);
+            /*DynamicJsonDocument doc(1024);
+            deserializeJson(doc, response);
 
-        //int code = doc["code"];
-        String donnees = doc["donnees"];
+            //int code = doc["code"];
+            String donnees = doc["donnees"];
 
-        DynamicJsonDocument docDeux(1024);
-        deserializeJson(docDeux, donnees);
-        std::string temperatureSechage = docDeux["temperature"];
-        std::string dureeSechage = docDeux["sechage"];
-        std::string nom = docDeux["nom"];
+            DynamicJsonDocument docDeux(1024);
+            deserializeJson(docDeux, donnees);
+            std::string temperatureSechage = docDeux["temperature"];
+            std::string dureeSechage = docDeux["sechage"];
+            std::string nom = docDeux["nom"];*/
 
 
-        std::string repString = "";
-        if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("obtenirInfosFour "+temperatureSechage+" "+dureeSechage+" "+nom); //Exemple pour appeler une fonction CallBack
-        String resultatTemperature = String(repString.c_str());
+            /*std::string repString = "";
+            if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("definirTypeBois "+temperatureSechage+" "+dureeSechage+" "+nom); //Exemple pour appeler une fonction CallBack
+            String resultatTemperature = String(repString.c_str());*/
 
-        request->send(200, "text/plain", resultatTemperature);
+            request->send(200, "text/plain", response);
+        }else if((request->hasParam("nomBois", true))){
+            HTTPClient http;
+            String paramNomBois = request->getParam("nomBois")->value().c_str();
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/obtenirBoisNom/"+paramNomBois;
+                
+            http.begin(apiSAC);
+            http.GET();
+
+            String response = http.getString();
+
+            DynamicJsonDocument doc(1024);
+            deserializeJson(doc, response);
+
+            //int code = doc["code"];
+            String donnees = doc["donnees"];
+
+            DynamicJsonDocument docDeux(1024);
+            deserializeJson(docDeux, donnees);
+            std::string temperatureSechage = docDeux["temperature"];
+            std::string dureeSechage = docDeux["sechage"];
+            std::string nom = docDeux["nom"];
+
+
+            /*std::string repString = "";
+            if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("definirTypeBois "+temperatureSechage+" "+dureeSechage+" "+nom); //Exemple pour appeler une fonction CallBack
+            String resultatTemperature = String(repString.c_str());*/
+
+            request->send(200, "text/plain", response);
+        }
     });
 
     this->on("/lancerFour", HTTP_POST, [](AsyncWebServerRequest *request) {
