@@ -68,6 +68,7 @@ using namespace std;
 #include "MyOledViewErrorWifiConnexion.h"
 #include <wire.h>
 #include "TemperatureStub.h"
+#include "MyButton.h"
 
 WiFiManager wm;
 #define WEBSERVER_H
@@ -87,6 +88,8 @@ MyOledViewInitialisation *vueInitialisation = NULL;
 MyOledViewWifiAp *vueAP = NULL;
 MyOledViewErrorWifiConnexion *vueWFErreur = NULL;
 TemperatureStub *temperatureStub = NULL;
+MyButton *myButtonAction = NULL;
+MyButton *myButtonReset = NULL;
 
 //Variable pour la connection Wifi
 const char *SSID = "SAC_CHRIS_";
@@ -166,6 +169,29 @@ void setup() {
     delay(100);
 
     // Initialisation de 'lécran avec l'écran d'initialisation
+	ecran = new MyOled(&Wire, OLED_RESET, SCREEN_HEIGHT, SCREEN_WIDTH);
+
+    // Vue initialisation
+	vueInitialisation = new MyOledViewInitialisation();
+	ecran->init(OLED_I2C_ADDRESS, true);
+	vueInitialisation->setIdDuSysteme("1");
+	vueInitialisation->setNomDuSysteme("SAC System");
+	vueInitialisation->setSensibiliteBoutonAction("????");
+	vueInitialisation->setSensibiliteBoutonReset("????");
+
+    //Gestion des boutons
+    myButtonAction = new MyButton();        //Pour lire le bouton actions
+    myButtonAction->init(T8);
+    int sensibilisationButtonAction = myButtonAction->autoSensibilisation();
+
+    myButtonReset = new MyButton();         //Pour lire le bouton hard reset
+    myButtonReset->init(T9);
+    int sensibilisationButtonReset = myButtonReset->autoSensibilisation();
+
+    // Update de l'initialisation avec les valeurs
+	vueInitialisation->setSensibiliteBoutonAction(sensibilisationButtonAction.c_str());
+	vueInitialisation->setSensibiliteBoutonReset(sensibilisationButtonReset.c_str());
+	ecran->updateCurrentView(vueInitialisation);
 
     // On initialise les deux temepratures a 0
     temperatureActuelle = 0;
@@ -203,6 +229,12 @@ void setup() {
 	if (!wm.autoConnect(ssIDRandom.c_str(), PASSRandom.c_str())){
         // affichage de l'écran d'acces AP
         Serial.println("Erreur de connexion.");
+        // VUE AP
+        vueAP = new MyOledViewWifiAp();
+        vueAP->setNomDuSysteme("SAC System");
+        vueAP->setSsIDDuSysteme(ssIDRandom.c_str());
+        vueAP->setPassDuSysteme(PASSRandom.c_str());
+        ecran->displayView(vueAP);
     } else {
         Serial.println("Connexion Établie.");
     }
