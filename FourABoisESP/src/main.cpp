@@ -141,6 +141,7 @@ std::string CallBackMessageListener(string message){
         String contentPOST = "{\"code\": 200, \"donnees\": {\"temperatureActuelle\":"+a+",\"nomBois\":\""+nomBois+"\",\"tempMiniBois\":"+String(tempMiniBois).c_str()+",\"dureeNecessaire\":"+String(dureeNecessaire).c_str()+",\"dureeActuelle\":"+String(dureeActuelle).c_str()+"}}";
         return(contentPOST.c_str());
     }else if(string(actionToDo.c_str()).compare(string("lancerFour")) == 0) {
+        dureeActuelle = 0;
         etatFour = !etatFour;
         String retour = (etatFour) ? "{\"code\": 200}" : "{\"code\": 400}";
         return(retour.c_str());
@@ -153,6 +154,8 @@ std::string CallBackMessageListener(string message){
 void setup() { 
     Serial.begin(9600);
     delay(100);
+
+    // Initialisation de 'lécran avec l'écran d'initialisation
 
     // On initialise les deux temepratures a 0
     temperatureActuelle = 0;
@@ -188,6 +191,7 @@ void setup() {
 
     // Affiche une erreur en cas d'echec
 	if (!wm.autoConnect(ssIDRandom.c_str(), PASSRandom.c_str())){
+        // affichage de l'écran d'acces AP
         Serial.println("Erreur de connexion.");
     } else {
         Serial.println("Connexion Établie.");
@@ -208,18 +212,33 @@ void setup() {
         digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
         delay(500);
     }
+
+    // une fois que tout est prêt, on allume la Del verte pour indiquer que le four est prêt à être utilisé
+    digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
 }
 
 void loop() {
 	// Recuperation de la température
     temperatureActuelle = temperatureStub->getTemperature();
-
     Serial.println(etatFour);
     Serial.println(temperatureActuelle);
 
-	if(temperatureActuelle > tempMiniBois){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
-        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur
-	}else{ 
-        digitalWrite(GPIO_PIN_DEL_ROUGE, LOW); // On coupe la DEL car la temperature est inferieure ou egale a la temperature entree par l'utilisateur
-	}
+    /* 
+    * Si le four est activé, on vérfiei la température et on affiche l'écran en fonction de la température apr rapport à la température minimale requise.
+    */
+    if(etatFour){
+        // On allume la del rouge pour indiquer que la porte du four est fermée
+        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
+
+        if(temperatureActuelle > tempMiniBois){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
+            digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur, le bois est donc en train d'être chauffé
+
+            delay(998); // la loop est quasiment instantanée, donc on va afficher un delay de 0.998 secondes pour simuler le passage d'une seconde et ajouter 1 à la durée actuelle
+            dureeActuelle++;
+        }else{ 
+            digitalWrite(GPIO_PIN_DEL_JAUNE, LOW); // On coupe la DEL car la temperature est inferieure ou egale a la temperature entree par l'utilisateur
+        }
+    }else{
+        // on affiche l'écran éteint
+    }
 }

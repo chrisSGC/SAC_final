@@ -39,7 +39,7 @@ window.onload = async () => {
 
     // get des donnees
     //const response = await fetch(URL_API+'api/bois', {
-    const response = await fetch('http://172.16.210.211/listeBois', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}});
+    const response = await fetch(URL_API+'listeBois', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}});
 
     const myJson = await response.json();
 
@@ -80,7 +80,7 @@ document.getElementById('typeBoisSelect').addEventListener('change', async () =>
     definirTempsActuel(tempsActuel);
 
     if(idBois != 0){
-        const response = await fetch('http://172.16.210.211/obtenirBois?idBois='+idBois, { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
+        const response = await fetch(URL_API+'obtenirBois?idBois='+idBois, { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
         const myJsonOB = await response.json();
 
         // si resultat, on affiche les donnees
@@ -102,7 +102,7 @@ document.getElementById('typeBoisSelect').addEventListener('change', async () =>
 });
 
 setInterval(async () => {
-    const response = await fetch('http://172.16.210.211/obtenirInfosFour', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
+    const response = await fetch(URL_API+'/obtenirInfosFour', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
 
     const myJsonSec = await response.json();
     // si resultat, on affiche les donnees
