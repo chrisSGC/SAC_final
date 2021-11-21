@@ -228,17 +228,46 @@ void loop() {
     */
     if(etatFour){
         // On allume la del rouge pour indiquer que la porte du four est fermée
-        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
+        //digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
+        allumerDelEtatFour();
 
         if(temperatureActuelle > tempMiniBois){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
-            digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur, le bois est donc en train d'être chauffé
+            // Si la durée actuelle est inférieur à la durée du bois, on lance le script de chauffage
+            if(dureeActuelle < dureeNecessaire){
+                digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur, le bois est donc en train d'être chauffé
 
-            delay(998); // la loop est quasiment instantanée, donc on va afficher un delay de 0.998 secondes pour simuler le passage d'une seconde et ajouter 1 à la durée actuelle
-            dureeActuelle++;
+                delay(998); // la loop est quasiment instantanée, donc on va afficher un delay de 0.998 secondes pour simuler le passage d'une seconde et ajouter 1 à la durée actuelle
+                dureeActuelle++;
+            }else{ // Si la durée est égale, on allume la del verte pour indiquer que le four est pret à être lancé
+                allumerDelEtatFour();
+            }
+
+        
+
         }else{ 
             digitalWrite(GPIO_PIN_DEL_JAUNE, LOW); // On coupe la DEL car la temperature est inferieure ou egale a la temperature entree par l'utilisateur
         }
     }else{
         // on affiche l'écran éteint
+    }
+}
+
+void allumerDelEtatFour(){
+    if(etatFour && (dureeActuelle < dureeNecessaire)){
+        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
+        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
+    }else if(etatFour && (dureeActuelle >= dureeNecessaire)){
+        digitalWrite(GPIO_PIN_DEL_ROUGE, LOW);
+        digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
+    }else if(etatFour && (dureeActuelle < dureeNecessaire) && (temperatureActuelle < tempMiniBois)){
+        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
+        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH);
+    }else{
+        digitalWrite(GPIO_PIN_DEL_ROUGE, LOW);
+        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
     }
 }
