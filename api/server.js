@@ -29,7 +29,7 @@ const connexion = mysql.createPool({
  */
 function creerToken(long) {
     var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!$%&#';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@';
     var charactersLength = characters.length;
 
     for ( var i = 0; i < long; i++ ) {
@@ -60,15 +60,23 @@ app.get('/api/bois', async (req, res) => {
 /**
  * Recupere les informations d'un type de bois a partir de son id
  */
-app.get('/api/obtenirBois/:idBois', async (req, res) => {
+app.get('/api/obtenirBois/:tokenCompte/:idBois', async (req, res) => {
     try{
-        const query = "SELECT * FROM bois WHERE id=?";
+        const verifierCompte = "SELECT id FROM compte WHERE token=?";
     
-        connexion.query(query, [req.params.idBois], (error, results) => {
-            if(!results){
+        connexion.query(verifierCompte, [entities.encode(req.params.tokenCompte)], (error, results) => {
+            if(!results[0]){
                 res.json({code: 400, status: "Type de bois inconnu."});
             }else{
-                res.json({code: 200, donnees: results[0]});
+                const query = "SELECT * FROM bois WHERE id=?";
+            
+                connexion.query(query, [req.params.idBois], (error, results) => {
+                    if(!results){
+                        res.json({code: 400, status: "Type de bois inconnu."});
+                    }else{
+                        res.json({code: 200, donnees: results[0]});
+                    }
+                });
             }
         });
     }catch{
@@ -76,15 +84,23 @@ app.get('/api/obtenirBois/:idBois', async (req, res) => {
     }
 });
 
-app.get('/api/obtenirBoisNom/:nomBois', async (req, res) => {
+app.get('/api/obtenirBoisNom/:tokenCompte/:nomBois', async (req, res) => {
     try{
-        const query = "SELECT * FROM bois WHERE nom LIKE '%"+entities.encode(req.params.nomBois)+"%'";
+        const verifierCompte = "SELECT id FROM compte WHERE token=?";
     
-        connexion.query(query, (error, results) => {
-            if(!results){
-                res.json({code: 400, status: "Type de bois inconnu.", informations: error.message});
+        connexion.query(verifierCompte, [entities.encode(req.params.tokenCompte)], (error, results) => {
+            if(!results[0]){
+                res.json({code: 400, status: "Type de bois inconnu."});
             }else{
-                res.json({code: 200, donnees: results});
+                const query = "SELECT * FROM bois WHERE nom LIKE '%"+entities.encode(req.params.nomBois)+"%'";
+            
+                connexion.query(query, (error, results) => {
+                    if(!results){
+                        res.json({code: 400, status: "Type de bois inconnu.", informations: error.message});
+                    }else{
+                        res.json({code: 200, donnees: results});
+                    }
+                });
             }
         });
     }catch{
@@ -96,10 +112,10 @@ app.get('/api/obtenirBoisNom/:nomBois', async (req, res) => {
  * PErmet de verifier si un compte existe avec son token
  */
 app.get('/api/verifierExistance/:tokenCompte', async (req, res) => {
-    const query = "SELECT id FROM compte WHERE token=?";
+    const verifierCompte = "SELECT id FROM compte WHERE token=?";
 
-    connexion.query(query, [entities.encode(req.params.tokenCompte)], (error, results) => {
-        if(!results){
+    connexion.query(verifierCompte, [entities.encode(req.params.tokenCompte)], (error, results) => {
+        if(!results[0]){
             res.json({retour: "false"});
         }else{
             res.json({retour: "true"});
@@ -134,7 +150,7 @@ app.post("/api/nouvelUtilisateur", async (req, res) => {
  */
 app.post("/api/connexion", (req, res) => {
     try{
-        const query = "SELECT token, mot_de_passe FROM compte WHERE nom=?";
+        const query = "SELECT mot_de_passe FROM compte WHERE nom=?";
         connexion.query(query, [req.body.nomCompte], (error, results) => {
             if (error) throw res.json({status: error});
             if(!results[0]){
@@ -142,7 +158,14 @@ app.post("/api/connexion", (req, res) => {
             }else{
                 try{
                     if(bcrypt.compare(req.body.motDePasse, results[0].mot_de_passe)){
-                        res.json({code: 200, token: results[0].token});
+                        let tokenCree = creerToken(15);
+                        console.log(tokenCree);
+
+                        // On modifie le token du compte
+                        const requeteToken = "UPDATE compte SET token = ? WHERE nom=?";
+                        connexion.query(requeteToken, [tokenCree, req.body.nomCompte], (error, results) => {});
+
+                        res.json({code: 200, token: tokenCree});
                     }else{
                         res.json({code: 400, status: "Erreur d'identifiants."});
                     }

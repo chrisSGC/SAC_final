@@ -125,11 +125,12 @@ void MyServer::initAllRoutes() {
     });
     
     this->on("/obtenirBois", HTTP_GET, [](AsyncWebServerRequest *request) {
-        if(request->hasParam("idBois")){
+        if(request->hasParam("idBois") && request->hasParam("token")){
             HTTPClient http;
 
             String paramIdBois = request->getParam("idBois")->value().c_str();
-            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramIdBois;
+            String paramToken = request->getParam("token")->value().c_str();
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
 
             http.begin(apiSAC);
             http.GET();
@@ -154,11 +155,12 @@ void MyServer::initAllRoutes() {
             //String resultatTemperature = String(repString.c_str());
 
             request->send(200, "text/plain", response);
-        }else if(request->hasParam("nomBois")){
+        }else if(request->hasParam("nomBois") && request->hasParam("token")){
             HTTPClient http;
 
             String paramNomBois = request->getParam("nomBois")->value().c_str();
-            String apiSAC = "http://172.16.210.7:3000/api/obtenirBoisNom/"+paramNomBois;
+            String paramToken = request->getParam("token")->value().c_str();
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBoisNom/"+paramToken+"/"+paramNomBois;
 
             http.begin(apiSAC);
             http.GET();
@@ -204,7 +206,10 @@ void MyServer::initAllRoutes() {
             deserializeJson(docDeux, donnees);
             std::string temperatureSechage = docDeux["temperature"];
             std::string dureeSechage = docDeux["sechage"];
-            std::string nom = docDeux["nom"];
+            //std::string nom = docDeux["nom"];
+            // test remplacer espaces par un point pour pas que la fonction d'alain coupe le nom en plusieurs mots
+            std::string nom = std::replace(docDeux["nom"].begin(), docDeux["nom"].end(), ' ', '.');
+            
 
             std::string repString = "";
             if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("definirTypeBois "+temperatureSechage+" "+dureeSechage+" "+nom); //Exemple pour appeler une fonction CallBack
