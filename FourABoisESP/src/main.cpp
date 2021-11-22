@@ -178,6 +178,7 @@ void setup() {
 	vueInitialisation->setNomDuSysteme("SAC System");
 	vueInitialisation->setSensibiliteBoutonAction("????");
 	vueInitialisation->setSensibiliteBoutonReset("????");
+	ecran->updateCurrentView(vueInitialisation);
 
     //Gestion des boutons
     myButtonAction = new MyButton();        //Pour lire le bouton actions
@@ -189,8 +190,8 @@ void setup() {
     int sensibilisationButtonReset = myButtonReset->autoSensibilisation();
 
     // Update de l'initialisation avec les valeurs
-	vueInitialisation->setSensibiliteBoutonAction(sensibilisationButtonAction.c_str());
-	vueInitialisation->setSensibiliteBoutonReset(sensibilisationButtonReset.c_str());
+	vueInitialisation->setSensibiliteBoutonAction(String(sensibilisationButtonAction).c_str());
+	vueInitialisation->setSensibiliteBoutonReset(String(sensibilisationButtonReset).c_str());
 	ecran->updateCurrentView(vueInitialisation);
 
     // On initialise les deux temepratures a 0
@@ -259,11 +260,31 @@ void setup() {
     digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
 }
 
+void allumerDelEtatFour(){
+    if(etatFour && (dureeActuelle < dureeNecessaire)){
+        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
+        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
+    }else if(etatFour && (dureeActuelle >= dureeNecessaire)){
+        digitalWrite(GPIO_PIN_DEL_ROUGE, LOW);
+        digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
+    }else if(etatFour && (dureeActuelle < dureeNecessaire) && (temperatureActuelle < tempMiniBois)){
+        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
+        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH);
+    }else{
+        digitalWrite(GPIO_PIN_DEL_ROUGE, LOW);
+        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
+        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
+    }
+}
+
 void loop() {
 	// Recuperation de la température
     temperatureActuelle = temperatureStub->getTemperature();
-    Serial.println(etatFour);
-    Serial.println(temperatureActuelle);
+    //Serial.println(etatFour);
+    //Serial.println(temperatureActuelle);
 
     /* 
     * Si le four est activé, on vérfiei la température et on affiche l'écran en fonction de la température apr rapport à la température minimale requise.
@@ -291,25 +312,5 @@ void loop() {
         }
     }else{
         // on affiche l'écran éteint
-    }
-}
-
-void allumerDelEtatFour(){
-    if(etatFour && (dureeActuelle < dureeNecessaire)){
-        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
-        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
-        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
-    }else if(etatFour && (dureeActuelle >= dureeNecessaire)){
-        digitalWrite(GPIO_PIN_DEL_ROUGE, LOW);
-        digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
-        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
-    }else if(etatFour && (dureeActuelle < dureeNecessaire) && (temperatureActuelle < tempMiniBois)){
-        digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
-        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
-        digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH);
-    }else{
-        digitalWrite(GPIO_PIN_DEL_ROUGE, LOW);
-        digitalWrite(GPIO_PIN_DEL_VERT, LOW);
-        digitalWrite(GPIO_PIN_DEL_JAUNE, LOW);
     }
 }
