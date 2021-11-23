@@ -9,6 +9,13 @@
 #include <ArduinoJson.h>
 using namespace std;
 
+/********************************
+ * TODO: ajouter la vérificaiton d'existence de compteur
+ * TODO: ajouter le statut au retour d'api
+ * TODO: traiter ce statut
+ * 
+ * */
+
 typedef std::string (*CallbackType)(std::string);
 CallbackType MyServer::ptrToCallBackFunction = NULL;
 
@@ -185,10 +192,11 @@ void MyServer::initAllRoutes() {
         
             //Serial.println('p');
 
-        if((request->hasParam("idBois"))){
+        if((request->hasParam("idBois") && request->hasParam("token"))){
             HTTPClient http;
             String paramIdBois = request->getParam("idBois")->value().c_str();
-            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramIdBois;
+            String paramToken = request->getParam("token")->value().c_str();
+            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
 
             
             http.begin(apiSAC);
