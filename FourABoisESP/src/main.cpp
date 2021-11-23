@@ -137,15 +137,6 @@ std::string CallBackMessageListener(string message){
         dureeNecessaire = ::atoi(arg2.c_str());
         nomBois = arg3.c_str();
 
-        Serial.print("Température a depasser : ");
-        Serial.println(arg1.c_str());
-
-        Serial.print("Durée de sechage : ");
-        Serial.println(arg2.c_str());
-
-        Serial.print("Nom : ");
-        Serial.println(arg3.c_str());
-
         return(String("Ok").c_str());
     }else if(string(actionToDo.c_str()).compare(string("obtenirInfosFour")) == 0) {
         /*DynamicJsonDocument doc(1024);
@@ -157,7 +148,8 @@ std::string CallBackMessageListener(string message){
         return serializeJson(doc, Serial);*/
 
         String a = String(temperatureActuelle).c_str();
-        String contentPOST = "{\"code\": 200, \"donnees\": {\"temperatureActuelle\":"+a+",\"nomBois\":\""+nomBois+"\",\"tempMiniBois\":"+String(tempMiniBois).c_str()+",\"dureeNecessaire\":"+String(dureeNecessaire).c_str()+",\"dureeActuelle\":"+String(dureeActuelle).c_str()+"}}";
+        String b = String(etatFour).c_str();
+        String contentPOST = "{\"code\": 200, \"donnees\": {\"etatFour\":"+b+", \"temperatureActuelle\":"+a+",\"idBois\":\""+nomBois+"\",\"tempMiniBois\":"+String(tempMiniBois).c_str()+",\"dureeNecessaire\":"+String(dureeNecessaire).c_str()+",\"dureeActuelle\":"+String(dureeActuelle).c_str()+"}}";
         return(contentPOST.c_str());
     }else if(string(actionToDo.c_str()).compare(string("lancerFour")) == 0) {
         dureeActuelle = 0;
@@ -345,5 +337,6 @@ void loop() {
     }else{
         // on affiche l'écran éteint
 	    ecran->updateCurrentView(vueOff);
+                Serial.println("PAS CH");
     }
 }

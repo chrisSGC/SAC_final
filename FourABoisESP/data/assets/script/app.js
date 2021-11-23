@@ -106,16 +106,22 @@ setInterval(async () => {
 
     const myJsonSec = await response.json();
     // si resultat, on affiche les donnees
+    console.log(myJsonSec);
 
     if(myJsonSec.code === 200){
-        // On met en place les donneees
-        document.getElementById('typeBoisChauff').innerHTML = myJsonSec.donnees.nomBois;
-        document.getElementById('tempVal').innerHTML = myJsonSec.donnees.temperatureActuelle;
-        document.getElementById('tempsActuel').innerHTML = myJsonSec.donnees.dureeActuelle;
-        document.getElementById('tempsTotal').innerHTML = myJsonSec.donnees.dureeNecessaire;
-        document.getElementById('temperatureMini').innerHTML = myJsonSec.donnees.tempMiniBois;
+        const infosBois = await fetch(URL_API+'obtenirNomBois?token='+localStorage.getItem("token")+'&idBois='+myJsonSec.donnees.idBois, { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
+        const repInfosBois = await infosBois.json();
+
+        if(repInfosBois.code){
+            // On met en place les donneees
+            document.getElementById('typeBoisChauff').innerHTML = repInfosBois.donnees.nom;
+        }
+            document.getElementById('tempVal').innerHTML = myJsonSec.donnees.temperatureActuelle;
+            document.getElementById('tempsActuel').innerHTML = myJsonSec.donnees.dureeActuelle;
+            document.getElementById('tempsTotal').innerHTML = myJsonSec.donnees.dureeNecessaire;
+            document.getElementById('temperatureMini').innerHTML = myJsonSec.donnees.tempMiniBois;
     }
-}, 1000);
+}, 2000);
 
 document.getElementById('demarrerFour').addEventListener('click', async () => {
     let idBois = document.getElementById('typeBoisSelect').value;
@@ -143,4 +149,13 @@ document.getElementById('demarrerFour').addEventListener('click', async () => {
     const myJson = await response.json();
 
     console.log(myJson);
+    if(myJson.code){
+        if(myJson.code === 200){
+            document.getElementById('demarrerFour').innerText = "Arreter le four";
+            document.getElementsByClassName('demarrerFour').style.backgroundColor = "#FF0000!important";
+        }else if(myJson.code === 400){
+            document.getElementById('demarrerFour').innerText = "Arreter le four";
+            document.getElementsByClassName('demarrerFour').style.backgroundColor = "#67B4F8!important";
+        }
+    }
 });
