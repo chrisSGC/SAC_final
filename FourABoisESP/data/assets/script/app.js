@@ -8,7 +8,7 @@ const verifConnexion = async () => {
         window.location.replace("index.html");
     }else{
         // appel get
-        const response = await fetch(URL_API+'api/verifierExistance/'+localStorage.getItem("token"), {
+        /*const response = await fetch(URL_API+'api/verifierExistance/'+localStorage.getItem("token"), {
             method: "GET", 
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
         });
@@ -24,9 +24,9 @@ const verifConnexion = async () => {
             window.location.replace("index.html");
         }else{
             return true;
-        }
+        }*/
 
-        //return true;
+        return true;
     }
 }
 
@@ -102,7 +102,7 @@ document.getElementById('typeBoisSelect').addEventListener('change', async () =>
 });
 
 setInterval(async () => {
-    const response = await fetch(URL_API+'/obtenirInfosFour?token='+localStorage.getItem("token"), { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
+    const response = await fetch(URL_API+'obtenirInfosFour', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
 
     const myJsonSec = await response.json();
     // si resultat, on affiche les donnees

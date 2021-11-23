@@ -66,6 +66,9 @@ using namespace std;
 #include "MyOledViewInitialisation.h"
 #include "MyOledViewWifiAp.h"
 #include "MyOledViewErrorWifiConnexion.h"
+#include "MyOledViewWorkingOFF.h"
+#include "MyOledViewWorkingCOLD.h"
+#include "MyOledViewWorkingHEAT.h"
 #include <wire.h>
 #include "TemperatureStub.h"
 #include "MyButton.h"
@@ -87,6 +90,9 @@ MyOled *ecran = NULL;
 MyOledViewInitialisation *vueInitialisation = NULL;
 MyOledViewWifiAp *vueAP = NULL;
 MyOledViewErrorWifiConnexion *vueWFErreur = NULL;
+MyOledViewWorkingOFF *vueOff = NULL;
+MyOledViewWorkingCOLD *vueCold = NULL;
+MyOledViewWorkingHEAT *vueHeat = NULL;
 TemperatureStub *temperatureStub = NULL;
 MyButton *myButtonAction = NULL;
 MyButton *myButtonReset = NULL;
@@ -128,7 +134,7 @@ std::string CallBackMessageListener(string message){
         return(String("Ok").c_str());
     }else if(string(actionToDo.c_str()).compare(string("definirTypeBois")) == 0) {
         tempMiniBois = ::atof(arg1.c_str());
-        dureeActuelle = ::atoi(arg1.c_str());
+        dureeNecessaire = ::atoi(arg2.c_str());
         nomBois = arg3.c_str();
 
         Serial.print("Température a depasser : ");
@@ -173,8 +179,14 @@ void setup() {
 
     // Vue initialisation
 	vueInitialisation = new MyOledViewInitialisation();
+	vueCold = new MyOledViewWorkingCOLD();
+	vueOff = new MyOledViewWorkingOFF();
+	vueHeat = new MyOledViewWorkingHEAT();
+	vueHeat->init("1245");
+	vueOff->init("1245");
+	vueCold->init("1245");
 	ecran->init(OLED_I2C_ADDRESS, true);
-	vueInitialisation->setIdDuSysteme("1");
+	vueInitialisation->setIdDuSysteme("1245");
 	vueInitialisation->setNomDuSysteme("SAC System");
 	vueInitialisation->setSensibiliteBoutonAction("????");
 	vueInitialisation->setSensibiliteBoutonReset("????");
@@ -258,6 +270,9 @@ void setup() {
 
     // une fois que tout est prêt, on allume la Del verte pour indiquer que le four est prêt à être utilisé
     digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
+    vueOff->setParams("ip", WiFi.localIP().toString().c_str());
+    vueCold->setParams("ip", WiFi.localIP().toString().c_str());
+    vueHeat->setParams("ip", WiFi.localIP().toString().c_str());
 }
 
 // Wifi.localIP.toString.c_str
@@ -285,6 +300,10 @@ void allumerDelEtatFour(){
 void loop() {
 	// Recuperation de la température
     temperatureActuelle = temperatureStub->getTemperature();
+	vueOff->setParams("temperature", String(temperatureActuelle).c_str());
+	vueCold->setParams("temperature", String(temperatureActuelle).c_str());
+	vueHeat->setParams("temperature", String(temperatureActuelle).c_str());
+    //Serial.println(temperatureActuelle);
     //Serial.println(etatFour);
     //Serial.println(temperatureActuelle);
 
@@ -295,24 +314,36 @@ void loop() {
         // On allume la del rouge pour indiquer que la porte du four est fermée
         //digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
         allumerDelEtatFour();
+        /*Serial.println(dureeActuelle);
+        Serial.println("Temperature rellee:");
+        Serial.println(temperatureActuelle);
+        Serial.println("Temperature necessaire:");
+        Serial.println(tempMiniBois);*/
 
         if(temperatureActuelle > tempMiniBois){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
             // Si la durée actuelle est inférieur à la durée du bois, on lance le script de chauffage
+            //Serial.println("LANCE");
+            //Serial.println(dureeNecessaire);
             if(dureeActuelle < dureeNecessaire){
                 digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur, le bois est donc en train d'être chauffé
+	            ecran->displayView(vueHeat);
+                Serial.println("CHAUFFAGE");
 
                 delay(998); // la loop est quasiment instantanée, donc on va afficher un delay de 0.998 secondes pour simuler le passage d'une seconde et ajouter 1 à la durée actuelle
                 dureeActuelle++;
             }else{ // Si la durée est égale, on allume la del verte pour indiquer que le four est pret à être lancé
                 allumerDelEtatFour();
+                etatFour = !etatFour;
             }
 
         
 
         }else{ 
             digitalWrite(GPIO_PIN_DEL_JAUNE, LOW); // On coupe la DEL car la temperature est inferieure ou egale a la temperature entree par l'utilisateur
+	        ecran->displayView(vueCold);
         }
     }else{
         // on affiche l'écran éteint
+	    ecran->updateCurrentView(vueOff);
     }
 }

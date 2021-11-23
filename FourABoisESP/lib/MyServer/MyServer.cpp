@@ -184,6 +184,7 @@ void MyServer::initAllRoutes() {
         std::string repString = "";
         if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("obtenirInfosFour"); //Exemple pour appeler une fonction CallBack
         String resultatTemperature = String(repString.c_str());
+        Serial.println(resultatTemperature);
 
         request->send(200, "text/plain", resultatTemperature);
     });
@@ -214,16 +215,18 @@ void MyServer::initAllRoutes() {
             deserializeJson(docDeux, donnees);
             std::string temperatureSechage = docDeux["temperature"];
             std::string dureeSechage = docDeux["sechage"];
-            //std::string nom = docDeux["nom"];
+            std::string nom = docDeux["nom"];
             // test remplacer espaces par un point pour pas que la fonction d'alain coupe le nom en plusieurs mots
-            std::string nom = std::replace(docDeux["nom"].begin(), docDeux["nom"].end(), ' ', '.');
+            //std::string nom = std::replace(docDeux["nom"].begin(), docDeux["nom"].end(), ' ', '.');
             
 
             std::string repString = "";
             if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("definirTypeBois "+temperatureSechage+" "+dureeSechage+" "+nom); //Exemple pour appeler une fonction CallBack
             String resultatTemperature = String(repString.c_str());
 
-            request->send(200, "text/plain", nom.c_str());
+            request->send(200, "text/plain", response);
+        }else{
+            request->send(404, "text/plain", "Not Found");
         }
     });
 
