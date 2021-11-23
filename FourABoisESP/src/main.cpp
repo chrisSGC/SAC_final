@@ -260,6 +260,8 @@ void setup() {
     digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
 }
 
+// Wifi.localIP.toString.c_str
+
 void allumerDelEtatFour(){
     if(etatFour && (dureeActuelle < dureeNecessaire)){
         digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
