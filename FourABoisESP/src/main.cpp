@@ -139,14 +139,6 @@ std::string CallBackMessageListener(string message){
 
         return(String("Ok").c_str());
     }else if(string(actionToDo.c_str()).compare(string("obtenirInfosFour")) == 0) {
-        /*DynamicJsonDocument doc(1024);
-        String a = String(temperatureActuelle).c_str();
-
-        doc["code"] = 200;
-        doc["donnees"] = "{\"temperatureActuelle\":"+a+",\"nomBois\":\""+nomBois+"\",\"tempMiniBois\":"+String(tempMiniBois).c_str()+",\"dureeNecessaire\":"+String(dureeNecessaire).c_str()+",\"dureeActuelle\":"+String(dureeActuelle).c_str()+"}";
-
-        return serializeJson(doc, Serial);*/
-
         String a = String(temperatureActuelle).c_str();
         String b = String(etatFour).c_str();
         String contentPOST = "{\"code\": 200, \"donnees\": {\"etatFour\":"+b+", \"temperatureActuelle\":"+a+",\"idBois\":\""+nomBois+"\",\"tempMiniBois\":"+String(tempMiniBois).c_str()+",\"dureeNecessaire\":"+String(dureeNecessaire).c_str()+",\"dureeActuelle\":"+String(dureeActuelle).c_str()+"}}";
@@ -198,6 +190,8 @@ void setup() {
 	vueInitialisation->setSensibiliteBoutonReset(String(sensibilisationButtonReset).c_str());
 	ecran->updateCurrentView(vueInitialisation);
 
+    delay(500);
+
     // On initialise les deux temepratures a 0
     temperatureActuelle = 0;
     tempMiniBois = 0;
@@ -229,17 +223,23 @@ void setup() {
 	char strToPrint[128];
     sprintf(strToPrint, "Identification : %s   MotDePasse: %s", ssIDRandom.c_str(), PASSRandom.c_str());
     Serial.println(strToPrint);
+    // VUE AP
+    vueAP = new MyOledViewWifiAp();
+    vueAP->setNomDuSysteme("SAC System");
+    vueAP->setSsIDDuSysteme(ssIDRandom.c_str());
+    vueAP->setPassDuSysteme(PASSRandom.c_str());
+    ecran->displayView(vueAP);
 
     // Affiche une erreur en cas d'echec
 	if (!wm.autoConnect(ssIDRandom.c_str(), PASSRandom.c_str())){
         // affichage de l'écran d'acces AP
         Serial.println("Erreur de connexion.");
-        // VUE AP
+        // TODO: VUE ERREUR A METTRE ICI
         vueAP = new MyOledViewWifiAp();
         vueAP->setNomDuSysteme("SAC System");
         vueAP->setSsIDDuSysteme(ssIDRandom.c_str());
         vueAP->setPassDuSysteme(PASSRandom.c_str());
-        ecran->displayView(vueAP);
+        ecran->updateCurrentView(vueAP);
     } else {
         Serial.println("Connexion Établie.");
     }
@@ -267,8 +267,6 @@ void setup() {
     vueHeat->setParams("ip", WiFi.localIP().toString().c_str());
 }
 
-// Wifi.localIP.toString.c_str
-
 void allumerDelEtatFour(){
     if(etatFour && (dureeActuelle < dureeNecessaire)){
         digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
@@ -290,32 +288,40 @@ void allumerDelEtatFour(){
 }
 
 void loop() {
+    int buttonReset = myButtonReset->checkMyButton();
+    int buttonAction = myButtonAction->checkMyButton();
+
+    if(buttonReset > 300)  {  //Si appuyé plus de 30 secondes
+        Serial.println("Button Reset pressed\n");
+        Serial.println("Button Hard reset pressed\n");
+        Serial.println("Suppression des réglages et redémarrage...\n");
+        wm.resetSettings();
+        ESP.restart();
+    }
+
+    if(buttonAction > 300){
+        Serial.println("Button action pressed\n");
+        if(ecran->veilleCheck()){
+            ecran->veilleExit();
+        }else{
+            ecran->veilleDelay(30);
+        }
+    }
+
 	// Recuperation de la température
     temperatureActuelle = temperatureStub->getTemperature();
 	vueOff->setParams("temperature", String(temperatureActuelle).c_str());
 	vueCold->setParams("temperature", String(temperatureActuelle).c_str());
 	vueHeat->setParams("temperature", String(temperatureActuelle).c_str());
-    //Serial.println(temperatureActuelle);
-    //Serial.println(etatFour);
-    //Serial.println(temperatureActuelle);
 
     /* 
-    * Si le four est activé, on vérfiei la température et on affiche l'écran en fonction de la température apr rapport à la température minimale requise.
+    * Si le four est activé, on vérifie la température et on affiche l'écran en fonction de la température apr rapport à la température minimale requise.
     */
     if(etatFour){
         // On allume la del rouge pour indiquer que la porte du four est fermée
-        //digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
         allumerDelEtatFour();
-        /*Serial.println(dureeActuelle);
-        Serial.println("Temperature rellee:");
-        Serial.println(temperatureActuelle);
-        Serial.println("Temperature necessaire:");
-        Serial.println(tempMiniBois);*/
 
         if(temperatureActuelle > tempMiniBois){ // Si la temperature est superieure a la temperature entree par l'utilisateur, on allume la DEL. Strictement superieure car dans le sujet il est ecrit " lorsque la température est supérieure à une certaine valeur en Celsius." et non "supérieure ou égale"
-            // Si la durée actuelle est inférieur à la durée du bois, on lance le script de chauffage
-            //Serial.println("LANCE");
-            //Serial.println(dureeNecessaire);
             if(dureeActuelle < dureeNecessaire){
                 digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur, le bois est donc en train d'être chauffé
 	            ecran->displayView(vueHeat);
@@ -327,9 +333,6 @@ void loop() {
                 allumerDelEtatFour();
                 etatFour = !etatFour;
             }
-
-        
-
         }else{ 
             digitalWrite(GPIO_PIN_DEL_JAUNE, LOW); // On coupe la DEL car la temperature est inferieure ou egale a la temperature entree par l'utilisateur
 	        ecran->displayView(vueCold);
@@ -337,6 +340,5 @@ void loop() {
     }else{
         // on affiche l'écran éteint
 	    ecran->updateCurrentView(vueOff);
-                Serial.println("PAS CH");
     }
 }

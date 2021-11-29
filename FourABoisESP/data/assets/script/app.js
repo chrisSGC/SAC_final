@@ -1,5 +1,7 @@
 const URL_API = "http://172.16.210.211/";
 var tempsActuel = 0;
+var tempsMax = 0;
+var dureeMax = 0;
 
 const verifConnexion = async () => {
     // récupere valeur de l'item
@@ -91,10 +93,13 @@ document.getElementById('typeBoisSelect').addEventListener('change', async () =>
             document.getElementById('origineBoisDet').innerHTML = myJsonOB.donnees.origine;
             document.getElementById('tempsSechBoisDet').innerHTML = myJsonOB.donnees.sechage;
             document.getElementById('temperatureBoisDet').innerHTML = myJsonOB.donnees.temperature;
+            dureeMax = myJsonOB.donnees.sechage;
 
             document.getElementById('tempsTotal').innerHTML = myJsonOB.donnees.sechage;
             document.getElementById('typeBoisChauff').innerHTML = myJsonOB.donnees.nom;
             document.getElementById('temperatureMini').innerHTML = "min "+myJsonOB.donnees.temperature+" Celcius";
+            document.getElementById('tempVal').innerHTML = 0
+            document.getElementById('tempsActuel').innerHTML = 0;
         }
     }else{
         document.getElementById('nomBoisDet').innerHTML = document.getElementById('typeBoisDet').innerHTML = document.getElementById('origineBoisDet').innerHTML = document.getElementById('tempsSechBoisDet').innerHTML = document.getElementById('temperatureBoisDet').innerHTML = document.getElementById('tempsTotal').innerHTML = document.getElementById('typeBoisChauff').innerHTML = document.getElementById('temperatureMini').innerHTML = "";
@@ -109,17 +114,25 @@ setInterval(async () => {
     console.log(myJsonSec);
 
     if(myJsonSec.code === 200){
-        const infosBois = await fetch(URL_API+'obtenirNomBois?token='+localStorage.getItem("token")+'&idBois='+myJsonSec.donnees.idBois, { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
-        const repInfosBois = await infosBois.json();
+        /*if(myJsonSec.donnees.idBois === ""){
+            const infosBois = await fetch(URL_API+'obtenirNomBois?token='+localStorage.getItem("token")+'&idBois='+myJsonSec.donnees.idBois, { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
+            const repInfosBois = await infosBois.json();
 
-        if(repInfosBois.code){
-            // On met en place les donneees
-            document.getElementById('typeBoisChauff').innerHTML = repInfosBois.donnees.nom;
+            if(repInfosBois.code){
+                // On met en place les donneees
+                document.getElementById('typeBoisChauff').innerHTML = repInfosBois.donnees.nom;
+            }
+        }*/
+
+        if(myJsonSec.donnees.dureeActuelle === dureeMax) {
+            document.getElementById('demarrerFour').innerText = "Demarrer le four";
+            document.getElementById('demarrerFour').classList.remove("fourActif");
         }
-            document.getElementById('tempVal').innerHTML = myJsonSec.donnees.temperatureActuelle;
-            document.getElementById('tempsActuel').innerHTML = myJsonSec.donnees.dureeActuelle;
-            document.getElementById('tempsTotal').innerHTML = myJsonSec.donnees.dureeNecessaire;
-            document.getElementById('temperatureMini').innerHTML = myJsonSec.donnees.tempMiniBois;
+            
+        document.getElementById('tempVal').innerHTML = myJsonSec.donnees.temperatureActuelle;
+        document.getElementById('tempsActuel').innerHTML = myJsonSec.donnees.dureeActuelle;
+        //document.getElementById('tempsTotal').innerHTML = myJsonSec.donnees.dureeNecessaire;
+        //document.getElementById('temperatureMini').innerHTML = myJsonSec.donnees.tempMiniBois;
     }
 }, 2000);
 
@@ -152,10 +165,10 @@ document.getElementById('demarrerFour').addEventListener('click', async () => {
     if(myJson.code){
         if(myJson.code === 200){
             document.getElementById('demarrerFour').innerText = "Arreter le four";
-            document.getElementsByClassName('demarrerFour').style.backgroundColor = "#FF0000!important";
+            document.getElementById('demarrerFour').classList.add("fourActif");
         }else if(myJson.code === 400){
-            document.getElementById('demarrerFour').innerText = "Arreter le four";
-            document.getElementsByClassName('demarrerFour').style.backgroundColor = "#67B4F8!important";
+            document.getElementById('demarrerFour').innerText = "Demarrer le four";
+            document.getElementById('demarrerFour').classList.remove("fourActif");
         }
     }
 });

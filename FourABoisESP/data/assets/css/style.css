@@ -10,12 +10,13 @@ select{ width: 95%; border: 3px solid #000000; line-height: 20px; background-col
 .temperature{ font-weight: 900; color: blue; }
 .dels{ display: flex; color: inherit; }
 button.demarrerFour{ background-color: #67B4F8; border-radius: 25px; padding: 10px 15px; font-weight: 900; font-size: 18px; border: 0; cursor: pointer; }
+button.fourActif{ background-color: #ff0000; }
 .delJaune, .delVerte{ margin-right: 5px; }
 .delJaune{ margin-left: 5px; }
-/*.delRouge, .delJaune, .delVerte{ width: 15px; height: 15px; background-color: #000000; border: 2px solid #000000; border-radius: 50%; }
+.delRouge, .delJaune, .delVerte{ width: 15px; height: 15px; background-color: #000000; border: 2px solid #000000; border-radius: 50%; }
 .delRouge.active{ background-color: red!important; }
 .delJaune.active{ background-color: yellow!important; }
-.delVerte.active{ background-color: green!important; }*/
+.delVerte.active{ background-color: green!important; }
 
 .delRouge, .delJaune, .delVerte{ width: 15px; height: 15px; color: #000000; }
 .delRouge.active{ color: red!important; }
