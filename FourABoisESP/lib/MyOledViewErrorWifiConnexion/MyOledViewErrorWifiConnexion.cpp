@@ -22,6 +22,7 @@ void MyOledViewErrorWifiConnexion::display(Adafruit_SSD1306 *adafruit){
     adafruit->println("Erreur de connexion");
     adafruit->display();
 }
+
 void MyOledViewErrorWifiConnexion::update(Adafruit_SSD1306 *adafruit){
     display(adafruit);
 }

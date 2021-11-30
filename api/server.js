@@ -84,6 +84,9 @@ app.get('/api/obtenirBois/:tokenCompte/:idBois', async (req, res) => {
     }
 });
 
+/**
+ * Récupère les informations d'un type de bois à partir de son nom (jamais utilisé mais alain le voulait donc ...)
+ */
 app.get('/api/obtenirBoisNom/:tokenCompte/:nomBois', async (req, res) => {
     try{
         const verifierCompte = "SELECT id FROM compte WHERE token=?";

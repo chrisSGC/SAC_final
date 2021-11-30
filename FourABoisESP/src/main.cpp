@@ -163,13 +163,16 @@ void setup() {
 
     // Vue initialisation
 	vueInitialisation = new MyOledViewInitialisation();
+    vueAP = new MyOledViewWifiAp();
 	vueCold = new MyOledViewWorkingCOLD();
 	vueOff = new MyOledViewWorkingOFF();
 	vueHeat = new MyOledViewWorkingHEAT();
+    vueWFErreur = new MyOledViewErrorWifiConnexion();
 	vueHeat->init("1245");
 	vueOff->init("1245");
 	vueCold->init("1245");
 	ecran->init(OLED_I2C_ADDRESS, true);
+    vueWFErreur->setNomDuSysteme("1245");
 	vueInitialisation->setIdDuSysteme("1245");
 	vueInitialisation->setNomDuSysteme("SAC System");
 	vueInitialisation->setSensibiliteBoutonAction("????");
@@ -224,7 +227,6 @@ void setup() {
     sprintf(strToPrint, "Identification : %s   MotDePasse: %s", ssIDRandom.c_str(), PASSRandom.c_str());
     Serial.println(strToPrint);
     // VUE AP
-    vueAP = new MyOledViewWifiAp();
     vueAP->setNomDuSysteme("SAC System");
     vueAP->setSsIDDuSysteme(ssIDRandom.c_str());
     vueAP->setPassDuSysteme(PASSRandom.c_str());
@@ -234,12 +236,7 @@ void setup() {
 	if (!wm.autoConnect(ssIDRandom.c_str(), PASSRandom.c_str())){
         // affichage de l'écran d'acces AP
         Serial.println("Erreur de connexion.");
-        // TODO: VUE ERREUR A METTRE ICI
-        vueAP = new MyOledViewWifiAp();
-        vueAP->setNomDuSysteme("SAC System");
-        vueAP->setSsIDDuSysteme(ssIDRandom.c_str());
-        vueAP->setPassDuSysteme(PASSRandom.c_str());
-        ecran->updateCurrentView(vueAP);
+        ecran->displayView(vueWFErreur);
     } else {
         Serial.println("Connexion Établie.");
     }

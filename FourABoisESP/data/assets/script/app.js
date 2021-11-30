@@ -40,7 +40,6 @@ window.onload = async () => {
     verifConnexion();
 
     // get des donnees
-    //const response = await fetch(URL_API+'api/bois', {
     const response = await fetch(URL_API+'listeBois', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}});
 
     const myJson = await response.json();
@@ -48,31 +47,7 @@ window.onload = async () => {
     if(myJson.code === 200){
         var select = document.getElementById('typeBoisSelect');
         myJson.donnees.map((ligne) => { var opt = document.createElement('option'); opt.value = ligne.id; opt.innerHTML = ligne.nom; select.appendChild(opt); });
-    }E
-
-    //function getFromSP_getAllWoodOptions() {
-        /*var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                var arrayOfStrings = this.responseText.split("&");
-                var select = document.getElementById('typeBoisSelect');*/
-                /*for (i = 0; i < arrayOfStrings.length; i=i+2) {
-                    var opt = document.createElement('option'); opt.value = ligne.id; opt.innerHTML = ligne.nom; select.appendChild(opt);
-                }*/
-
-                //console.log(this.responseText);
-    
-                //Refresh le contenu
-                /*var siteHeader = document.getElementById('typeBois_ListBox_Select');
-                siteHeader.style.display='none';
-                siteHeader.offsetHeight; // no need to store this anywhere, the reference is enough
-                siteHeader.style.display='block';*/
-    
-           /* }
-        };
-        xhttp.open("GET", "listeBois", true);
-        xhttp.send();*/
-    //}
+    }
 }
 
 document.getElementById('typeBoisSelect').addEventListener('change', async () => {
@@ -114,16 +89,6 @@ setInterval(async () => {
     console.log(myJsonSec);
 
     if(myJsonSec.code === 200){
-        /*if(myJsonSec.donnees.idBois === ""){
-            const infosBois = await fetch(URL_API+'obtenirNomBois?token='+localStorage.getItem("token")+'&idBois='+myJsonSec.donnees.idBois, { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
-            const repInfosBois = await infosBois.json();
-
-            if(repInfosBois.code){
-                // On met en place les donneees
-                document.getElementById('typeBoisChauff').innerHTML = repInfosBois.donnees.nom;
-            }
-        }*/
-
         if(myJsonSec.donnees.dureeActuelle === dureeMax) {
             document.getElementById('demarrerFour').innerText = "Demarrer le four";
             document.getElementById('demarrerFour').classList.remove("fourActif");
@@ -131,34 +96,15 @@ setInterval(async () => {
             
         document.getElementById('tempVal').innerHTML = myJsonSec.donnees.temperatureActuelle;
         document.getElementById('tempsActuel').innerHTML = myJsonSec.donnees.dureeActuelle;
-        //document.getElementById('tempsTotal').innerHTML = myJsonSec.donnees.dureeNecessaire;
-        //document.getElementById('temperatureMini').innerHTML = myJsonSec.donnees.tempMiniBois;
     }
 }, 2000);
 
 document.getElementById('demarrerFour').addEventListener('click', async () => {
-    let idBois = document.getElementById('typeBoisSelect').value;
-
-    console.log(idBois);
-    
-    /*const response = await fetch(URL_API+'definirTypeBois', { method: "POST", body: "idBois="+idBois, });*/
-    /*const response = await fetch(URL_API+'definirTypeBois', {
-    //const response = await fetch(URL_API+'definirTypeBois?idBois='+idBois, {
-        method: "POST", 
-        //body: JSON.stringify(data),
-        body: "idBois="+idBois,
-        //body: { idBois : idBois },
-        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
-    });*/
+    //let idBois = document.getElementById('typeBoisSelect').value;
     
     const response = await fetch(URL_API+'lancerFour', {
         method: "POST"
     });
-    
-    /*const response = await fetch(URL_API+'definirTypeBois?idBois='+idBois, {
-        method: "GET"
-    });*/
-
     const myJson = await response.json();
 
     console.log(myJson);

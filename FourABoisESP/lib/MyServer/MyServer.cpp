@@ -196,11 +196,6 @@ void MyServer::initAllRoutes() {
     });
 
     this->on("/lancerFour", HTTP_POST, [](AsyncWebServerRequest *request) {
-        /**
-         * 1/ envoi de la requete au main
-         * 2/ f(type de retour) on envoi le statut d'etat approprié
-         * 
-         * */
         std::string repString = "";
         if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("lancerFour"); //Exemple pour appeler une fonction CallBack
         String resultatTemperature = String(repString.c_str());

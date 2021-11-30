@@ -3,7 +3,6 @@ var URL_API = "http://172.16.210.211/";
 document.getElementById("signin").addEventListener("submit", (evt) => {
     evt.preventDefault();
 
-    //document.getElementById("mauvaisId").innerHTML = "DATA SETTED";
     verifConnexion();
 });
 
@@ -18,17 +17,12 @@ window.onload = () => {
 const verifConnexion = async () => {
     let data = {nomCompte: document.getElementById("floatingInput").value, motDePasse: document.getElementById("floatingPassword").value};
 
-    //const response = await fetch(URL_API+'connexion?nomCompte='+data.nomCompte+'&motDePasse='+data.motDePasse, {
     const response = await fetch(URL_API+'connexion', {
         method: "POST", 
-        //body: JSON.stringify(data),
         body: "nomCompte="+data.nomCompte+"&motDePasse="+data.motDePasse,
-        //headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
     });
 
     const myJson = await response.json();
-
-    console.log(myJson);
 
     if(typeof myJson.token !== 'undefined'){
         // On stocke l'id de l'utilisateur
