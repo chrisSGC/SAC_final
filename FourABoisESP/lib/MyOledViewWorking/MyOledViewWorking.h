@@ -62,7 +62,7 @@ class MyOledViewWorking : public MyOledView {
         void display(Adafruit_SSD1306 *adafruit);
         void update(Adafruit_SSD1306 *adafruit);
         void displayGifFire(Adafruit_SSD1306 *adafruit, int positionX, int positionY);
-        void displayGifFirAnimated(Adafruit_SSD1306 *adafruit, int positionX, int positionY);
+        void displayGifFireAnimated(Adafruit_SSD1306 *adafruit, int positionX, int positionY);
 
         unsigned char *Fire24x24Pointers[6];
         int indexFire = 1;

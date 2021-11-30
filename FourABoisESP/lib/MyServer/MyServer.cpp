@@ -157,8 +157,6 @@ void MyServer::initAllRoutes() {
         if (ptrToCallBackFunction) repString = (*ptrToCallBackFunction)("obtenirInfosFour"); //Exemple pour appeler une fonction CallBack
         String resultatTemperature = String(repString.c_str());
 
-        Serial.println(resultatTemperature);
-
         request->send(200, "text/plain", resultatTemperature);
     });
 

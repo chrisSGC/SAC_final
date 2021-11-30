@@ -37,5 +37,17 @@ void MyOledViewWorking::update(Adafruit_SSD1306 *adafruit){
 }
 
 void MyOledViewWorking::displayGifFire(Adafruit_SSD1306 *adafruit, int positionX, int positionY){
-    adafruit->drawBitmap(positionX, positionY, Fire24x24Pointers[5], positionX + 24, positionY - 12, WHITE);
+    adafruit->drawBitmap(positionX, positionY, Fire24x24Pointers[0], 24, 12, WHITE);
+}
+
+void MyOledViewWorking::displayGifFireAnimated(Adafruit_SSD1306 *adafruit, int positionX, int positionY){
+    int indexFeu = 0;
+    //int lastFramePosition = 12;
+    //int posX = 0;
+    //int posY = 20;
+    for (int positionXs = -128; positionXs <= positionX; positionXs++) {
+        adafruit->drawBitmap(positionX, positionY, Fire24x24Pointers[(++indexFeu) % 6], 24, 12, WHITE);
+        delay(5);
+    }
+    //adafruit->drawBitmap(positionX, positionY, Fire24x24Pointers[5], positionX + 24, positionY - 12, WHITE);
 }

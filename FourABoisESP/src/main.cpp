@@ -322,9 +322,8 @@ void loop() {
             if(dureeActuelle < dureeNecessaire){
                 digitalWrite(GPIO_PIN_DEL_JAUNE, HIGH); // On allume la DEL car la temperature est superieure a la temperature entree par l'utilisateur, le bois est donc en train d'être chauffé
 	            ecran->displayView(vueHeat);
-                Serial.println("CHAUFFAGE");
 
-                delay(998); // la loop est quasiment instantanée, donc on va afficher un delay de 0.998 secondes pour simuler le passage d'une seconde et ajouter 1 à la durée actuelle
+                //delay(250); // la loop est quasiment instantanée, donc on va afficher un delay de 0.998 secondes pour simuler le passage d'une seconde et ajouter 1 à la durée actuelle
                 dureeActuelle++;
             }else{ // Si la durée est égale, on allume la del verte pour indiquer que le four est pret à être lancé
                 allumerDelEtatFour();
