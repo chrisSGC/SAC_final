@@ -24,7 +24,7 @@ const verifConnexion = async () => {
 
     const myJson = await response.json();
 
-    if(typeof myJson.token !== 'undefined'){
+    if(myJson.code === 200){
         // On stocke l'id de l'utilisateur
         localStorage.setItem('token', myJson.token);
 

@@ -4,13 +4,14 @@ var tempsMax = 0;
 var dureeMax = 0;
 
 const verifConnexion = async () => {
+    console.log(localStorage.getItem("token"));
     // récupere valeur de l'item
-    if(typeof(localStorage.getItem("token")) == 'undefined'){
+    if(localStorage.getItem("token") === null){
         // La clé existe pas alors on redirige
-        window.location.replace("index.html");
+        window.location.replace("/");
     }else{
         // appel get
-        /*const response = await fetch(URL_API+'api/verifierExistance/'+localStorage.getItem("token"), {
+        const response = await fetch(URL_API+'api/verifierExistance/'+localStorage.getItem("token"), {
             method: "GET", 
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
         });
@@ -23,12 +24,8 @@ const verifConnexion = async () => {
             localStorage.removeItem('token');
     
             // Redirection vers l'index
-            window.location.replace("index.html");
-        }else{
-            return true;
-        }*/
-
-        return true;
+            window.location.replace("/");
+        }
     }
 }
 
@@ -38,6 +35,10 @@ const definirTempsActuel = (temps) => {
 
 window.onload = async () => {
     verifConnexion();
+
+    document.getElementById('delRouge').classList.remove("active");
+    document.getElementById('delJaune').classList.remove("active");
+    document.getElementById('delVerte').classList.add("active");
 
     // get des donnees
     const response = await fetch(URL_API+'listeBois', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}});
@@ -92,8 +93,28 @@ setInterval(async () => {
         if(myJsonSec.donnees.dureeActuelle === dureeMax) {
             document.getElementById('demarrerFour').innerText = "Demarrer le four";
             document.getElementById('demarrerFour').classList.remove("fourActif");
+
+            document.getElementById('delRouge').classList.remove("active");
+            document.getElementById('delJaune').classList.remove("active");
+            document.getElementById('delVerte').classList.add("active");
+        }else{
+            if(myJsonSec.donnees.etatFour === 1){
+                if(myJsonSec.donnees.temperatureActuelle < myJsonSec.donnees.tempMiniBois){
+                    document.getElementById('delRouge').classList.add("active");
+                    document.getElementById('delJaune').classList.remove("active");
+                    document.getElementById('delVerte').classList.remove("active");
+                }else{
+                    document.getElementById('delRouge').classList.add("active");
+                    document.getElementById('delJaune').classList.add("active");
+                    document.getElementById('delVerte').classList.remove("active");
+                }
+            }else{
+                document.getElementById('delRouge').classList.remove("active");
+                document.getElementById('delJaune').classList.remove("active");
+                document.getElementById('delVerte').classList.add("active");
+            }
         }
-            
+
         document.getElementById('tempVal').innerHTML = myJsonSec.donnees.temperatureActuelle;
         document.getElementById('tempsActuel').innerHTML = myJsonSec.donnees.dureeActuelle;
     }
@@ -110,9 +131,17 @@ document.getElementById('demarrerFour').addEventListener('click', async () => {
     console.log(myJson);
     if(myJson.code){
         if(myJson.code === 200){
+            document.getElementById('delRouge').classList.add("active");
+            document.getElementById('delJaune').classList.remove("active");
+            document.getElementById('delVerte').classList.remove("active");
+
             document.getElementById('demarrerFour').innerText = "Arreter le four";
             document.getElementById('demarrerFour').classList.add("fourActif");
         }else if(myJson.code === 400){
+            document.getElementById('delRouge').classList.remove("active");
+            document.getElementById('delJaune').classList.remove("active");
+            document.getElementById('delVerte').classList.remove("active");
+
             document.getElementById('demarrerFour').innerText = "Demarrer le four";
             document.getElementById('demarrerFour').classList.remove("fourActif");
         }
