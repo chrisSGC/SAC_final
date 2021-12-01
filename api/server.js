@@ -1,5 +1,18 @@
 /**
- * TODO: Ajouter encryption des données
+ * Christophe Ferru
+ * Projet Sac
+ * Cours Objets connectés - 2021
+ * 
+ * encryption des mots de passe par BCRYPT
+ * 
+ * La majorité des routes renvoient un json formaté composé en général de 2 parametres:
+ * 
+ * un code définissant le succe sou l'echec de la demande
+ * un objet (donnees) comportant les informations du résultat
+ * 
+ * Par exemple, si je demande la lsite des bois, en cas de réussite, je recevrais un json comportant le code 200 ainsi qu'on objet donees comportant plusieurs bois.
+ * 
+ * Pour les détails des retours d'API, la documentation est disponible dans le dossier docuAPI
  * */
 
 require("dotenv").config();
@@ -29,7 +42,7 @@ const connexion = mysql.createPool({
  */
 function creerToken(long) {
     var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!$%&#';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@';
     var charactersLength = characters.length;
 
     for ( var i = 0; i < long; i++ ) {
@@ -40,6 +53,8 @@ function creerToken(long) {
 
 /**
  * Permet de recuperer la liste des bois enregistres
+ * 
+ * Cette méthode n'utilise pas de token
  */
 app.get('/api/bois', async (req, res) => {
     try{
@@ -60,31 +75,23 @@ app.get('/api/bois', async (req, res) => {
 /**
  * Recupere les informations d'un type de bois a partir de son id
  */
-app.get('/api/obtenirBois/:idBois', async (req, res) => {
+app.get('/api/obtenirBois/:tokenCompte/:idBois', async (req, res) => {
     try{
-        const query = "SELECT * FROM bois WHERE id=?";
+        const verifierCompte = "SELECT id FROM compte WHERE token=?";
     
-        connexion.query(query, [req.params.idBois], (error, results) => {
-            if(!results){
+        connexion.query(verifierCompte, [entities.encode(req.params.tokenCompte)], (error, results) => {
+            if(!results[0]){
                 res.json({code: 400, status: "Type de bois inconnu."});
             }else{
-                res.json({code: 200, donnees: results[0]});
-            }
-        });
-    }catch{
-        res.json({code: 400, status: "Type de bois inconnu."});
-    }
-});
-
-app.get('/api/obtenirBoisNom/:nomBois', async (req, res) => {
-    try{
-        const query = "SELECT * FROM bois WHERE nom LIKE '%"+entities.encode(req.params.nomBois)+"%'";
-    
-        connexion.query(query, (error, results) => {
-            if(!results){
-                res.json({code: 400, status: "Type de bois inconnu.", informations: error.message});
-            }else{
-                res.json({code: 200, donnees: results});
+                const query = "SELECT * FROM bois WHERE id=?";
+            
+                connexion.query(query, [req.params.idBois], (error, results) => {
+                    if(!results){
+                        res.json({code: 400, status: "Type de bois inconnu."});
+                    }else{
+                        res.json({code: 200, donnees: results[0]});
+                    }
+                });
             }
         });
     }catch{
@@ -93,13 +100,40 @@ app.get('/api/obtenirBoisNom/:nomBois', async (req, res) => {
 });
 
 /**
- * PErmet de verifier si un compte existe avec son token
+ * Récupère les informations d'un type de bois à partir de son nom (jamais utilisé mais alain le voulait donc ...)
+ */
+app.get('/api/obtenirBoisNom/:tokenCompte/:nomBois', async (req, res) => {
+    try{
+        const verifierCompte = "SELECT id FROM compte WHERE token=?";
+    
+        connexion.query(verifierCompte, [entities.encode(req.params.tokenCompte)], (error, results) => {
+            if(!results[0]){
+                res.json({code: 400, status: "Type de bois inconnu."});
+            }else{
+                const query = "SELECT * FROM bois WHERE nom LIKE '%"+entities.encode(req.params.nomBois)+"%'";
+            
+                connexion.query(query, (error, results) => {
+                    if(!results){
+                        res.json({code: 400, status: "Type de bois inconnu.", informations: error.message});
+                    }else{
+                        res.json({code: 200, donnees: results});
+                    }
+                });
+            }
+        });
+    }catch{
+        res.json({code: 400, status: "Type de bois inconnu."});
+    }
+});
+
+/**
+ * Permet de verifier si un compte existe avec son token
  */
 app.get('/api/verifierExistance/:tokenCompte', async (req, res) => {
-    const query = "SELECT id FROM compte WHERE token=?";
+    const verifierCompte = "SELECT id FROM compte WHERE token=?";
 
-    connexion.query(query, [entities.encode(req.params.tokenCompte)], (error, results) => {
-        if(!results){
+    connexion.query(verifierCompte, [entities.encode(req.params.tokenCompte)], (error, results) => {
+        if(!results[0]){
             res.json({retour: "false"});
         }else{
             res.json({retour: "true"});
@@ -131,10 +165,12 @@ app.post("/api/nouvelUtilisateur", async (req, res) => {
 
 /**
  * Permet de se connecter a l'application avec ses identifiants et son mot de passe
+ * 
+ * Si l'authentification est réussie, on genere un token qui sera utilisé tout au long de la session actuelle.
  */
 app.post("/api/connexion", (req, res) => {
     try{
-        const query = "SELECT token, mot_de_passe FROM compte WHERE nom=?";
+        const query = "SELECT mot_de_passe FROM compte WHERE nom=?";
         connexion.query(query, [req.body.nomCompte], (error, results) => {
             if (error) throw res.json({status: error});
             if(!results[0]){
@@ -142,7 +178,14 @@ app.post("/api/connexion", (req, res) => {
             }else{
                 try{
                     if(bcrypt.compare(req.body.motDePasse, results[0].mot_de_passe)){
-                        res.json({code: 200, token: results[0].token});
+                        let tokenCree = creerToken(15);
+                        console.log(tokenCree);
+
+                        // On modifie le token du compte
+                        const requeteToken = "UPDATE compte SET token = ? WHERE nom=?";
+                        connexion.query(requeteToken, [tokenCree, req.body.nomCompte], (error, results) => {});
+
+                        res.json({code: 200, token: tokenCree});
                     }else{
                         res.json({code: 400, status: "Erreur d'identifiants."});
                     }
@@ -153,5 +196,24 @@ app.post("/api/connexion", (req, res) => {
         });
     }catch{
         res.json({code: 400, status: "Erreur d'identifiants."});
+    }
+});
+
+/**
+ * Permet de vérifier l'existence d'un compte en se basant sur son token
+ */
+app.get("/api/verifierExistence/:tokenCompte", (req, res) => {
+    try{
+        const query = "SELECT id FROM compte WHERE token=?";
+        connexion.query(query, [entities.encode(req.params.tokenCompte)], (error, results) => {
+            if (error) throw res.json({status: error});
+            if(!results[0]){
+                res.json({code: 400});
+            }else{
+                res.json({code: 200});
+            }
+        });
+    }catch{
+        res.json({code: 400});
     }
 });

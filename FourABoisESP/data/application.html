@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[DEV 1.0] SAC</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div class="zone">
+        <div class="logo"><img src="images/logoSAC.PNG" alt="logo" /></div>
+        <div class="type">
+            <h2>Type de bois</h2>
+            <select name="typeBoisSelect" id="typeBoisSelect">
+                <option value="0">-- Selectionnez un type de bois</option>
+            </select>
+        </div>
+        <div class="caracteristiques">
+            <h2>Caractéristiques</h2>
+            <table>
+                <tr><th><span>Bois</span> <span>:</span></th><td id="nomBoisDet"></td></tr>
+                <tr><th><span>Type</span> <span>:</span></th><td id="typeBoisDet"></td></tr>
+                <tr><th><span>Origine</span> <span>:</span></th><td id="origineBoisDet"></td></tr>
+                <tr><th><span>Temps de séchage</span> <span>:</span></th><td id="tempsSechBoisDet"></td></tr>
+                <tr><th><span>Température minimum</span> <span>:</span></th><td id="temperatureBoisDet"></td></tr>
+            </table>
+        </div>
+    </div>
+    <div class="zone">
+        <div class="titreZone"><h2>Controle du four de séchage</h2></div>
+        <div class="vueFour">
+            <h3>Temperature du four</h3>
+            <div class="temperature">
+                <span class="tempVal" id="tempVal">23.00</span> Celcius
+            </div>
+            <button id="demarrerFour" class="demarrerFour">Demarrage du four</button>
+            <div class="infosPied">
+                <span class="typeBois" id="typeBoisChauff"></span>
+                <span class="temps"><span class="tempsActuel" id="tempsActuel"></span>s/<span class="tempsTotal" id="tempsTotal"></span>s</span>
+                <span class="temperatureMini" id="temperatureMini"></span>
+                <div class="dels">
+                    <div id="delRouge" class="delRouge"></div>
+                    <div id="delJaune" class="delJaune"></div>
+                    <div id="delVerte" class="delVerte"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script/app.js"/></script>
+</body>
+</html>
