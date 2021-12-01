@@ -85,12 +85,6 @@ To get a local copy up and running follow these simple example steps.
 	<li>MySQL 5.7.31 </li>
 </ul>
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
-
 ### Installation
 
 _Importer la base de donnees avec le script fourni dnas le dossier api._
