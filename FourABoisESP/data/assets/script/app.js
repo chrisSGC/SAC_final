@@ -12,7 +12,7 @@ const verifConnexion = async () => {
         window.location.replace("/");
     }else{
         // appel get
-        const response = await fetch(URL_API+'verifierExistance/'+localStorage.getItem("token"), {
+        const response = await fetch(URL_API+'verifierExistance?token='+localStorage.getItem("token"), {
             method: "GET", 
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
         });
@@ -20,7 +20,7 @@ const verifConnexion = async () => {
         const myJson = await response.json();
 
         // si valeur non correcte on redirige
-        if(myJson.retour == 'false'){
+        if(myJson.code !== 200){
             // On retire l'item
             localStorage.removeItem('token');
     

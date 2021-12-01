@@ -106,7 +106,7 @@ void MyServer::initAllRoutes() {
         }
     });
     
-    this->on("/obtenirNomBois", HTTP_GET, [](AsyncWebServerRequest *request) {
+    this->on("/verifierExistance", HTTP_GET, [](AsyncWebServerRequest *request) {
         if(request->hasParam("token")){
             HTTPClient http;
 
