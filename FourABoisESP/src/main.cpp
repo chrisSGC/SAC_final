@@ -1,33 +1,52 @@
-/* Copyright (C) 2021 Alain Dube
- * All rights reserved.
- *
- * Projet Sac
- * Ecole du Web
- * Cours Objets connectés (c)2021
- *  
+/* Par Christophe Ferru
+    All rights reserved.
+
+    Projet Sac
+    Cours Objets connectés - 2021
+
     @file     main.cpp
-    @author   Alain Dubé
-    @version  1.1 21/08/15 
+    @author   Christophe Ferru
+    @version  1.0 - 30 Novembre 2021
 
     Historique des versions
-           Version    Date       Auteur       Description
-           1.1        21/08/15  Alain       Première version du logiciel
+           Version    Date          Auteur      Description
+           1.0        30-11-2021    C.F         Première version totalement fonctionnelle du logiciel
 
     platform = espressif32
     board = esp32doit-devkit-v1
     framework = arduino
-    lib_deps = 
-                      
-            ESPAsyncWebServer-esphome                   (Pour accéder au Wifi)
-            AsyncTCP-esphome                            (Pour utiliser les focntionnalités TCP)
-            bblanchon/ArduinoJson@^6.17.2               (Pour accéder au fonctionnalités Json)
+    lib_deps =         
+        ESPAsyncWebServer-esphome                   (Pour accéder au Wifi)
+        AsyncTCP-esphome                            (Pour utiliser les fonctionnalités TCP)
+        bblanchon/ArduinoJson@^6.17.2               (Pour accéder au fonctionnalités Json)
 
     Autres librairies (à copier dans le répertoire lib)
-         WifiManagerDevelopment
+        WifiManagerDevelopment
             //Remarques
             //Pour trouver le WifiManager (dans la branche development)
             //   https://github.com/tzapu/WiFiManager/tree/development
             //   Ne pas oublier d'appuyez sur l'ampoule et choisir : ajouter Lib
+        Arduino_GFX
+        Arduino_GrayOLED
+        Arduino_I2C
+        Arduino_SPITFT
+        Arduino_SSD1306
+        DHT
+        gfxfont
+        MyButton - Par Alain Dubé
+        myLib - Par Alain Dubé
+        MyOled - Par Alain Dubé
+        MyOledView - Par Alain Dubé
+        MyOledViewErrorWifiConnexion
+        MyOledViewInitialisation
+        MyOledViewWifiAp
+        MyOledViewWorking
+        MyOledViewWorkingCOLD
+        MyOledViewWorkingHEAT
+        MyOledViewWorkingOFF
+        MyServer - Par Alain Dubé
+        Splash
+        TemperatureStub - Par Alain Dubé
     
     Fonctions utiles (utilitaires)
         /lib/MYLIB/myFunctions.cpp
@@ -41,14 +60,30 @@
             std::string get_random_string(unsigned int len)
 
     Classes du système
-         
-        MyServer                        V1.0    Pour la gestion des routes pour le site WEB
-            /data                               Répertoire qui contient les fichiers du site WEB 
-                index.html              V1.0    Page index du site WEB
-                index.css               V1.0    CSS
-                script.js               V1.0    JS (fonctions JavaScript)
-              
- * */
+        MyServer                                V1.0    Pour la gestion des routes pour le site WEB
+            /data                                       Répertoire qui contient les fichiers du site WEB 
+                index.html                      V1.0    Page index du site WEB
+                application.html                V1.0    Page de l'application du site WEB
+                /css
+                    signin.css                  V1.0    CSS de la connexion
+                    style.css                   V1.0    CSS de l'application
+                /script
+                    connexion.js                V1.0    JS (fonctions JavaScript) de la connexion
+                    app.js                      V1.0    JS (fonctions JavaScript) de l'application
+                /images
+                    logoSAC.png                 V1.0    Logo de l'application
+        MyOled                                          Pour la gestion de l'écran
+        MyOledView                                      Pour la gestion des vues de l'écran
+        MyOledViewInitialisation                        Vue d'initialisation
+        MyOledViewWifiAp                                Vue point d'acces
+        MyOledViewErrorWifiConnexion                    Vue en cas d'erreur de wifi
+        MyOledViewWorkingOFF                            Vue quand le four n'est pas en marche
+        MyOledViewWorkingCOLD                           Vue quand le four n'est pas assez chaud
+        MyOledViewWorkingHEAT                           Vue quand le four est en fonction et chauffe
+        TemperatureStub                                 Classe qui permet la gestion de la prise de température - Par Alain Dubé
+        MyButton                                        Classe qui gère les boutons - Par Alain Dubé
+*/
+
 // Using nécessaires au projet
 using namespace std;
 
@@ -75,12 +110,12 @@ using namespace std;
 
 WiFiManager wm;
 #define WEBSERVER_H
-#define SCREEN_WIDTH 128        // OLED display width, in pixels
-#define SCREEN_HEIGHT 64        // OLED display height, in pixels
-#define OLED_RESET 4            // Reset pin # (or -1 if sharing Arduino reset pin)
-#define OLED_I2C_ADDRESS 0x3C   // Adresse I2C de l'écran Oled
-#define DHTPIN  15   // Pin utilisée par le senseur DHT22
-#define DHTTYPE DHT22  // Type de senseur utilisé: ici un DHT 22
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define OLED_RESET 4 // Reset pin # (or -1 if sharing Arduino reset pin)
+#define OLED_I2C_ADDRESS 0x3C // Adresse I2C de l'écran Oled
+#define DHTPIN  15 // Pin utilisée par le senseur DHT22
+#define DHTTYPE DHT22 // Type de senseur utilisé: ici un DHT 22
 #define GPIO_PIN_DEL_ROUGE 12 // La DEL rouge est branchee sur le GPIO 12
 #define GPIO_PIN_DEL_VERT 14 //La DEL verte est branchée sur le GPIO14
 #define GPIO_PIN_DEL_JAUNE 27 // La DEL jaune est branchée sur le GPIO27
@@ -133,10 +168,11 @@ std::string CallBackMessageListener(string message){
     if(string(actionToDo.c_str()).compare(string("action")) == 0){
         return(String("Ok").c_str());
     }else if(string(actionToDo.c_str()).compare(string("definirTypeBois")) == 0) {
-        tempMiniBois = ::atof(arg1.c_str());
-        dureeNecessaire = ::atoi(arg2.c_str());
-        nomBois = arg3.c_str();
-
+        if(!etatFour){
+            tempMiniBois = ::atof(arg1.c_str());
+            dureeNecessaire = ::atoi(arg2.c_str());
+            nomBois = arg3.c_str();
+        }
         return(String("Ok").c_str());
     }else if(string(actionToDo.c_str()).compare(string("obtenirInfosFour")) == 0) {
         String a = String(temperatureActuelle).c_str();
@@ -161,7 +197,7 @@ void setup() {
     // Initialisation de 'lécran avec l'écran d'initialisation
 	ecran = new MyOled(&Wire, OLED_RESET, SCREEN_HEIGHT, SCREEN_WIDTH);
 
-    // Vue initialisation
+    // Initialisation de l'ensemble des vues
 	vueInitialisation = new MyOledViewInitialisation();
     vueAP = new MyOledViewWifiAp();
 	vueCold = new MyOledViewWorkingCOLD();
@@ -177,21 +213,23 @@ void setup() {
 	vueInitialisation->setNomDuSysteme("SAC System");
 	vueInitialisation->setSensibiliteBoutonAction("????");
 	vueInitialisation->setSensibiliteBoutonReset("????");
-	ecran->updateCurrentView(vueInitialisation);
 
-    //Gestion des boutons
-    myButtonAction = new MyButton();        //Pour lire le bouton actions
+    // On affiche l'écran d'initialisation
+	ecran->displayView(vueInitialisation);
+
+    // On initilise les deux boutons puis on met leur valeur dans la variable associée
+    myButtonAction = new MyButton();
     myButtonAction->init(T8);
     int sensibilisationButtonAction = myButtonAction->autoSensibilisation();
 
-    myButtonReset = new MyButton();         //Pour lire le bouton hard reset
+    myButtonReset = new MyButton();
     myButtonReset->init(T9);
     int sensibilisationButtonReset = myButtonReset->autoSensibilisation();
 
-    // Update de l'initialisation avec les valeurs
+    // Mise à jour de l'initialisation avec les valeurs
 	vueInitialisation->setSensibiliteBoutonAction(String(sensibilisationButtonAction).c_str());
 	vueInitialisation->setSensibiliteBoutonReset(String(sensibilisationButtonReset).c_str());
-	ecran->updateCurrentView(vueInitialisation);
+	ecran->displayView(vueInitialisation);
 
     delay(500);
 
@@ -226,7 +264,8 @@ void setup() {
 	char strToPrint[128];
     sprintf(strToPrint, "Identification : %s   MotDePasse: %s", ssIDRandom.c_str(), PASSRandom.c_str());
     Serial.println(strToPrint);
-    // VUE AP
+
+    // On met en place les informations de la vue Access point puis on affiche cette derniere
     vueAP->setNomDuSysteme("SAC System");
     vueAP->setSsIDDuSysteme(ssIDRandom.c_str());
     vueAP->setPassDuSysteme(PASSRandom.c_str());
@@ -246,6 +285,7 @@ void setup() {
     serveur->initAllRoutes();
     serveur->initCallback(&CallBackMessageListener);
 
+    // On fait clignoter toutes les DELs 2 fois
     for(int a = 0; a < 2; a++){
         digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
         digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
@@ -259,11 +299,21 @@ void setup() {
 
     // une fois que tout est prêt, on allume la Del verte pour indiquer que le four est prêt à être utilisé
     digitalWrite(GPIO_PIN_DEL_VERT, HIGH);
+
+    // On ajoute le parametre IP a toutes les vues qui en ont besoin
     vueOff->setParams("ip", WiFi.localIP().toString().c_str());
     vueCold->setParams("ip", WiFi.localIP().toString().c_str());
     vueHeat->setParams("ip", WiFi.localIP().toString().c_str());
 }
 
+/**
+ * Permet de gérer l'allumage des DELs d'un même endroit en fonction de l'état du four, de la durée et de la température
+ * 
+ * Si le four est lancé est que la cuisson n'est pas terminée: DEL rouge allumé uniquement (four vérouillé)
+ * Si le four est allumé et que la durée est terminée: DEL Verte allumée (four ouvert)
+ * Si le four est allumé, que la cuisson n'est pas terminée et que la température est inférieure à la température mini: DELs rouge et jaune allumées
+ * Dans les autres cas: aucune DEL n'est allumée
+ * */
 void allumerDelEtatFour(){
     if(etatFour && (dureeActuelle < dureeNecessaire)){
         digitalWrite(GPIO_PIN_DEL_ROUGE, HIGH);
@@ -285,10 +335,11 @@ void allumerDelEtatFour(){
 }
 
 void loop() {
+    // Initialisation de la véirfication des boutons, sont-ils appuyés?
     int buttonReset = myButtonReset->checkMyButton();
     int buttonAction = myButtonAction->checkMyButton();
 
-    if(buttonReset > 300)  {  //Si appuyé plus de 30 secondes
+    if(buttonReset > 300)  {  // Si le bouton est appuyé plus de 300ms, on réinitilise l'ensemble du systeme: ESP et WiFi Manager
         Serial.println("Button Reset pressed\n");
         Serial.println("Button Hard reset pressed\n");
         Serial.println("Suppression des réglages et redémarrage...\n");
@@ -296,7 +347,7 @@ void loop() {
         ESP.restart();
     }
 
-    if(buttonAction > 300){
+    if(buttonAction > 300){ // Si le bouton d'action est appuyé plus de 300ms, on met l'écran en veille ou, si il l'est déjà, on le sort de son état de veille
         Serial.println("Button action pressed\n");
         if(ecran->veilleCheck()){
             ecran->veilleExit();
@@ -307,6 +358,8 @@ void loop() {
 
 	// Recuperation de la température
     temperatureActuelle = temperatureStub->getTemperature();
+
+    // On met la température dans les params des vues qui en ont besoin
 	vueOff->setParams("temperature", String(temperatureActuelle).c_str());
 	vueCold->setParams("temperature", String(temperatureActuelle).c_str());
 	vueHeat->setParams("temperature", String(temperatureActuelle).c_str());
@@ -335,6 +388,6 @@ void loop() {
         }
     }else{
         // on affiche l'écran éteint
-	    ecran->updateCurrentView(vueOff);
+	    ecran->displayView(vueOff);
     }
 }

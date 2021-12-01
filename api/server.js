@@ -1,5 +1,18 @@
 /**
- * TODO: Ajouter encryption des données
+ * Christophe Ferru
+ * Projet Sac
+ * Cours Objets connectés - 2021
+ * 
+ * encryption des mots de passe par BCRYPT
+ * 
+ * La majorité des routes renvoient un json formaté composé en général de 2 parametres:
+ * 
+ * un code définissant le succe sou l'echec de la demande
+ * un objet (donnees) comportant les informations du résultat
+ * 
+ * Par exemple, si je demande la lsite des bois, en cas de réussite, je recevrais un json comportant le code 200 ainsi qu'on objet donees comportant plusieurs bois.
+ * 
+ * Pour les détails des retours d'API, la documentation est disponible dans le dossier docuAPI
  * */
 
 require("dotenv").config();
@@ -40,6 +53,8 @@ function creerToken(long) {
 
 /**
  * Permet de recuperer la liste des bois enregistres
+ * 
+ * Cette méthode n'utilise pas de token
  */
 app.get('/api/bois', async (req, res) => {
     try{
@@ -112,7 +127,7 @@ app.get('/api/obtenirBoisNom/:tokenCompte/:nomBois', async (req, res) => {
 });
 
 /**
- * PErmet de verifier si un compte existe avec son token
+ * Permet de verifier si un compte existe avec son token
  */
 app.get('/api/verifierExistance/:tokenCompte', async (req, res) => {
     const verifierCompte = "SELECT id FROM compte WHERE token=?";
@@ -150,6 +165,8 @@ app.post("/api/nouvelUtilisateur", async (req, res) => {
 
 /**
  * Permet de se connecter a l'application avec ses identifiants et son mot de passe
+ * 
+ * Si l'authentification est réussie, on genere un token qui sera utilisé tout au long de la session actuelle.
  */
 app.post("/api/connexion", (req, res) => {
     try{
@@ -182,6 +199,9 @@ app.post("/api/connexion", (req, res) => {
     }
 });
 
+/**
+ * Permet de vérifier l'existence d'un compte en se basant sur son token
+ */
 app.get("/api/verifierExistence/:tokenCompte", (req, res) => {
     try{
         const query = "SELECT id FROM compte WHERE token=?";

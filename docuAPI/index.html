@@ -278,7 +278,7 @@
                     <div class="row">
                         <h4>URL d'appel</h4>
                         <div class="d-flex justify-content-between bg-light ml-2 px-2 py-2">
-                            <div class="font-monospace col-4">/verifierExistance/{:token}</div>
+                            <div class="font-monospace col-4">/verifierExistence/{:token}</div>
                             <div class="align-middle"><span class="badge bg-primary">GET</span></div>
                         </div>
                         <div class="mt-4 w-100">
@@ -458,35 +458,36 @@
                     <div class="row">
                         <h4>URL d'appel</h4>
                         <div class="d-flex justify-content-between bg-light ml-2 px-2 py-2">
-                            <div class="font-monospace col-4">/ficheTypeBois/{:nom}</div>
+                            <div class="font-monospace col-4">/ficheTypeBois/{:tokenCompte}/{:nom}</div>
                             <div class="align-middle"><span class="badge bg-primary">GET</span></div>
                         </div>
                     </div>
                     <div class="row mt-2">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                              <a class="nav-link active" id="requeteFTB-tab" data-bs-toggle="tab" href="#requeteFTB" role="tab" aria-controls="requeteFTB" aria-selected="true">Requete</a>
+                              <a class="nav-link active" id="requeteFTBN-tab" data-bs-toggle="tab" href="#requeteFTBN" role="tab" aria-controls="requeteFTBN" aria-selected="true">Requete</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                              <a class="nav-link" id="reponseFTB-tab" data-bs-toggle="tab" href="#reponseFTB" role="tab" aria-controls="reponseFTB" aria-selected="false">Reponse</a>
+                              <a class="nav-link" id="reponseFTBN-tab" data-bs-toggle="tab" href="#reponseFTBN" role="tab" aria-controls="reponseFTBN" aria-selected="false">Reponse</a>
                             </li>
                           </ul>
                           <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active" id="requeteFTB" role="tabpanel" aria-labelledby="requeteFTB-tab">
+                            <div class="tab-pane fade show active" id="requeteFTBN" role="tabpanel" aria-labelledby="requeteFTBN-tab">
                                 <div class="row">
                                     <h5>Params</h5>
                                     <div class='row'>
                                         <div class="col-2 align-middle"><span class="badge bg-primary">GET</span></div>
-                                        <div class="col-10">Permet de récupérer un type de bois pqr son nom.<br><span class="badge bg-warning text-dark">Méthode asynchrone</span></div>
+                                        <div class="col-10">Permet de récupérer un type de bois par son nom.<br><span class="badge bg-warning text-dark">Méthode asynchrone</span></div>
                                     </div>
                                     <p><span class="fw-bold">Media type:</span> Application/json</p>
                                     <p><span class="fw-bold">Type:</span> Object</p>
                                     <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                        <li class="list-group-item"><span class="fw-bold">tokenCompte:</span> <span class="fst-italic">required (string)</span></li>
                                         <li class="list-group-item"><span class="fw-bold">nomBois:</span> <span class="fst-italic">required (string, Peut ne pas être complet)</span></li>
                                     </ul></p>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="reponseFTB" role="tabpanel" aria-labelledby="reponseFTB-tab">
+                            <div class="tab-pane fade" id="reponseFTBN" role="tabpanel" aria-labelledby="reponseFTBN-tab">
                                 <div class="row mt-4">
                                     <h5 class="fw-bold">HTTP Code statut <span class="text-primary">200</span></h5>
                                     <hr>
@@ -548,7 +549,7 @@
                     <div class="row">
                         <h4>URL d'appel</h4>
                         <div class="d-flex justify-content-between bg-light ml-2 px-2 py-2">
-                            <div class="font-monospace col-4">/obtenirBois/{:idBois}</div>
+                            <div class="font-monospace col-4">/obtenirBois/{:tokenCompte}/{:idBois}</div>
                             <div class="align-middle"><span class="badge bg-primary">GET</span></div>
                         </div>
                     </div>
@@ -572,6 +573,7 @@
                                     <p><span class="fw-bold">Media type:</span> Application/json</p>
                                     <p><span class="fw-bold">Type:</span> Object</p>
                                     <p><span class="fw-bold">Proprietes:</span> <ul class="list-group">
+                                        <li class="list-group-item"><span class="fw-bold">tokenCompte:</span> <span class="fst-italic">required (string)</span></li>
                                         <li class="list-group-item"><span class="fw-bold">idBois:</span> <span class="fst-italic">required (int)</span></li>
                                     </ul></p>
                                 </div>
