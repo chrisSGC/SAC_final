@@ -181,3 +181,19 @@ app.post("/api/connexion", (req, res) => {
         res.json({code: 400, status: "Erreur d'identifiants."});
     }
 });
+
+app.get("/api/verifierExistence/:tokenCompte", (req, res) => {
+    try{
+        const query = "SELECT id FROM compte WHERE token=?";
+        connexion.query(query, [entities.encode(req.params.tokenCompte)], (error, results) => {
+            if (error) throw res.json({status: error});
+            if(!results[0]){
+                res.json({code: 400});
+            }else{
+                res.json({code: 200});
+            }
+        });
+    }catch{
+        res.json({code: 400});
+    }
+});
