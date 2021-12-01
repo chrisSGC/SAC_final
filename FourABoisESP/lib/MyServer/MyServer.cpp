@@ -42,7 +42,8 @@ void MyServer::initAllRoutes() {
     this->on("/connexion", HTTP_POST, [](AsyncWebServerRequest *request) {
         if((request->hasParam("nomCompte", true)) && (request->hasParam("motDePasse", true))){
             HTTPClient http;
-            String apiSAC = "http://172.16.210.7:3000/api/connexion";
+            //String apiSAC = "http://172.16.210.7:3000/api/connexion";
+            String apiSAC = "http://10.0.0.60:3000/api/connexion";
 
             http.begin(apiSAC);
             http.addHeader("Accept", "application/json");
@@ -66,7 +67,8 @@ void MyServer::initAllRoutes() {
 
     this->on("/listeBois", HTTP_GET, [](AsyncWebServerRequest *request) {
         HTTPClient http;
-        String apiSAC = "http://172.16.210.7:3000/api/bois";
+        //String apiSAC = "http://172.16.210.7:3000/api/bois";
+        String apiSAC = "http://10.0.0.60:3000/api/bois";
         http.begin(apiSAC);
         http.GET();
         String response = http.getString();
@@ -80,7 +82,8 @@ void MyServer::initAllRoutes() {
 
             String paramIdBois = request->getParam("idBois")->value().c_str();
             String paramToken = request->getParam("token")->value().c_str();
-            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
+            //String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
+            String apiSAC = "http://10.0.0.60:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
 
             http.begin(apiSAC);
             http.GET();
@@ -103,13 +106,33 @@ void MyServer::initAllRoutes() {
         }
     });
     
+    this->on("/obtenirNomBois", HTTP_GET, [](AsyncWebServerRequest *request) {
+        if(request->hasParam("token")){
+            HTTPClient http;
+
+            String paramToken = request->getParam("token")->value().c_str();
+            //String apiSAC = "http://172.16.210.7:3000/api/verifierExistence/"+paramToken+"/"+paramIdBois;
+            String apiSAC = "http://10.0.0.60:3000/api/verifierExistence/"+paramToken;
+
+            http.begin(apiSAC);
+            http.GET();
+
+            String response = http.getString();
+
+            request->send(200, "text/plain", response);
+        }else{
+            request->send(400, "text/plain", "Envoyez les parametres requis.");
+        }
+    });
+    
     this->on("/obtenirBois", HTTP_GET, [](AsyncWebServerRequest *request) {
         if(request->hasParam("idBois") && request->hasParam("token")){
             HTTPClient http;
 
             String paramIdBois = request->getParam("idBois")->value().c_str();
             String paramToken = request->getParam("token")->value().c_str();
-            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
+            //String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
+            String apiSAC = "http://10.0.0.60:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
 
             http.begin(apiSAC);
             http.GET();
@@ -139,7 +162,8 @@ void MyServer::initAllRoutes() {
 
             String paramNomBois = request->getParam("nomBois")->value().c_str();
             String paramToken = request->getParam("token")->value().c_str();
-            String apiSAC = "http://172.16.210.7:3000/api/obtenirBoisNom/"+paramToken+"/"+paramNomBois;
+            //String apiSAC = "http://172.16.210.7:3000/api/obtenirBoisNom/"+paramToken+"/"+paramNomBois;
+            String apiSAC = "http://10.0.0.60:3000/api/obtenirBoisNom/"+paramToken+"/"+paramNomBois;
 
             http.begin(apiSAC);
             http.GET();
@@ -165,7 +189,8 @@ void MyServer::initAllRoutes() {
             HTTPClient http;
             String paramIdBois = request->getParam("idBois")->value().c_str();
             String paramToken = request->getParam("token")->value().c_str();
-            String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
+            //String apiSAC = "http://172.16.210.7:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
+            String apiSAC = "http://10.0.0.60:3000/api/obtenirBois/"+paramToken+"/"+paramIdBois;
             
             http.begin(apiSAC);
             http.GET();

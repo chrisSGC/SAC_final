@@ -1,20 +1,20 @@
-const URL_API = "http://172.16.210.211/";
+//const URL_API = "http://172.16.210.211/";
+const URL_API = "http://10.0.0.15/";
 var tempsActuel = 0;
 var tempsMax = 0;
 var dureeMax = 0;
 var etatFourActuel = 0;
 
 const verifConnexion = async () => {
-    console.log(localStorage.getItem("token"));
     // récupere valeur de l'item
     if(localStorage.getItem("token") === null){
         // La clé existe pas alors on redirige
         window.location.replace("/");
     }else{
         // appel get
-        const response = await fetch(URL_API+'api/verifierExistance/'+localStorage.getItem("token"), {
+        const response = await fetch(URL_API+'verifierExistance/'+localStorage.getItem("token"), {
             method: "GET", 
-            headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
+            headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
         });
     
         const myJson = await response.json();
@@ -42,7 +42,7 @@ window.onload = async () => {
     document.getElementById('delVerte').classList.add("active");
 
     // get des donnees
-    const response = await fetch(URL_API+'listeBois', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}});
+    const response = await fetch(URL_API+'listeBois', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}});
 
     const myJson = await response.json();
 
@@ -59,7 +59,7 @@ document.getElementById('typeBoisSelect').addEventListener('change', async () =>
     //definirTempsActuel(tempsActuel);
     if(etatFourActuel === 0){
         if(idBois != 0){
-            const response = await fetch(URL_API+'obtenirBois?token='+localStorage.getItem("token")+'&idBois='+idBois, { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
+            const response = await fetch(URL_API+'obtenirBois?token='+localStorage.getItem("token")+'&idBois='+idBois, { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'} });
             const myJsonOB = await response.json();
 
             // si resultat, on affiche les donnees
@@ -85,7 +85,7 @@ document.getElementById('typeBoisSelect').addEventListener('change', async () =>
 });
 
 setInterval(async () => {
-    const obtenirInfosFour = await fetch(URL_API+'obtenirInfosFour', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json'} });
+    const obtenirInfosFour = await fetch(URL_API+'obtenirInfosFour', { method: "GET", headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'} });
 
     const infosFour = await obtenirInfosFour.json();
 
@@ -128,7 +128,7 @@ document.getElementById('demarrerFour').addEventListener('click', async () => {
     //let idBois = document.getElementById('typeBoisSelect').value;
     
     const lancerFour = await fetch(URL_API+'lancerFour', {
-        method: "POST"
+        method: "POST", headers: { 'Access-Control-Allow-Origin': '*'}
     });
     const etatFourRetour = await lancerFour.json();
 

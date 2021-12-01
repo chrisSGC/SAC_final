@@ -1,4 +1,5 @@
-var URL_API = "http://172.16.210.211/";
+//const URL_API = "http://172.16.210.211/";
+const URL_API = "http://10.0.0.15/";
 
 document.getElementById("signin").addEventListener("submit", (evt) => {
     evt.preventDefault();
@@ -19,7 +20,7 @@ const verifConnexion = async () => {
 
     const response = await fetch(URL_API+'connexion', {
         method: "POST", 
-        body: "nomCompte="+data.nomCompte+"&motDePasse="+data.motDePasse,
+        body: "nomCompte="+data.nomCompte+"&motDePasse="+data.motDePasse, headers: { 'Access-Control-Allow-Origin': '*'}
     });
 
     const myJson = await response.json();
