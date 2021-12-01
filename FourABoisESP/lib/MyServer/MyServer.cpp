@@ -94,7 +94,7 @@ void MyServer::initAllRoutes() {
      * Route en GET qui permet de récupérer uniquement le nom du bois
      * 
      * 
-     * On vérfie la présence du token et de l'id du bois, si ils sont présents, on lance l'appel vers l'api afin de récupérer les informations du bois en question. Suite à ca, on défait le json pour récupérer uniquement le nom et ne renvoyer que le nom.
+     * On vérifie la présence du token et de l'id du bois, si ils sont présents, on lance l'appel vers l'api afin de récupérer les informations du bois en question. Suite à ca, on défait le json pour récupérer uniquement le nom et ne renvoyer que le nom.
      * */
     this->on("/obtenirNomBois", HTTP_GET, [](AsyncWebServerRequest *request) {
         if(request->hasParam("idBois") && request->hasParam("token")){
